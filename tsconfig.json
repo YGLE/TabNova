@@ -30,8 +30,10 @@
       "@hooks/*": ["./extension/src/hooks/*"],
       "@store/*": ["./extension/src/store/*"],
       "@services/*": ["./extension/src/services/*"],
-      "@types/*": ["./extension/src/types/*"],
-      "@utils/*": ["./extension/src/utils/*"]
+      "@tabnova-types/*": ["./extension/src/types/*"],
+      "@utils/*": ["./extension/src/utils/*"],
+      "@storage/*": ["./extension/src/storage/*"],
+      "@config/*": ["./extension/src/config/*"]
     }
   },
   "include": ["extension/src"],

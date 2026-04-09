@@ -358,7 +358,7 @@ body {
 
 ```html
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -366,10 +366,13 @@ body {
 </head>
 <body>
   <div id="root"></div>
-  <script type="module" src="../src/popup/index.tsx"></script>
+  <!-- Vite résout le chemin correctement au build -->
+  <script type="module" src="/src/popup/index.tsx"></script>
 </body>
 </html>
 ```
+
+> ⚠️ **Note**: Le fichier `extension/public/popup.html` est déjà créé dans le repo. Ne pas modifier le path du script, Vite le gère correctement.
 
 **Estimated time**: 1.5 hours
 
@@ -519,7 +522,7 @@ body {
 
 ```html
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -527,10 +530,13 @@ body {
 </head>
 <body>
   <div id="root"></div>
-  <script type="module" src="../src/dashboard/index.tsx"></script>
+  <!-- Vite résout le chemin correctement au build -->
+  <script type="module" src="/src/dashboard/index.tsx"></script>
 </body>
 </html>
 ```
+
+> ⚠️ **Note**: Le fichier `extension/public/dashboard.html` est déjà créé dans le repo. Ne pas modifier le path du script, Vite le gère correctement.
 
 **Estimated time**: 1.5 hours
 

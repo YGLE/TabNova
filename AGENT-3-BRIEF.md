@@ -265,7 +265,7 @@ html, body {
 
 ```typescript
 import { create } from 'zustand';
-import type { TabGroup, Tab } from '@types';
+import type { TabGroup, Tab } from '@tabnova-types';
 
 interface GroupState {
   groups: TabGroup[];
@@ -605,10 +605,7 @@ html {
   color: var(--color-white);
 }
 
-/* Force dark mode always */
-* {
-  @apply dark;
-}
+/* TabNova is dark-mode only — no toggle needed */
 ```
 
 **Estimated time**: 1 hour

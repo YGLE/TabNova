@@ -54,6 +54,8 @@ export * from './Chrome';
 
 **File: `extension/src/types/TabGroup.ts`**
 ```typescript
+import type { Tab } from './Tab';
+
 export interface TabGroup {
   id: string;              // UUID
   name: string;            // "Dev", "Design", etc. (required, max 30 chars)
@@ -66,6 +68,7 @@ export interface TabGroup {
   };
   createdAt: Date;
   updatedAt: Date;
+  lastAccessedAt?: Date;   // Pour l'élagage des groupes (18 mois)
   syncId?: string;         // For cloud sync
   tabs: Tab[];
 }
