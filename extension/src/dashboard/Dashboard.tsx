@@ -33,6 +33,171 @@ function EmptyState() {
   );
 }
 
+function GroupDetailPanel({ group, onClose }: { group: TabGroup; onClose: () => void }) {
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        bottom: 0,
+        width: '280px',
+        background: '#111827',
+        borderLeft: '1px solid rgba(255,255,255,0.1)',
+        display: 'flex',
+        flexDirection: 'column',
+        zIndex: 20,
+        boxShadow: '-4px 0 24px rgba(0,0,0,0.4)',
+      }}
+    >
+      {/* Header */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          padding: '16px',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+          flexShrink: 0,
+        }}
+      >
+        <span
+          style={{
+            width: '12px',
+            height: '12px',
+            borderRadius: '50%',
+            background: group.color,
+            flexShrink: 0,
+          }}
+        />
+        <span
+          style={{
+            color: '#fff',
+            fontWeight: 600,
+            fontSize: '15px',
+            flex: 1,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {group.name}
+        </span>
+        <button
+          onClick={onClose}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: '#6B7280',
+            cursor: 'pointer',
+            fontSize: '18px',
+            padding: '2px 6px',
+            borderRadius: '4px',
+          }}
+          aria-label="Fermer"
+        >
+          ×
+        </button>
+      </div>
+
+      {/* Tab count */}
+      <div style={{ padding: '8px 16px 4px', color: '#6B7280', fontSize: '12px' }}>
+        {group.tabs.length} onglet{group.tabs.length !== 1 ? 's' : ''}
+      </div>
+
+      {/* Tab list */}
+      <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0' }}>
+        {group.tabs.length === 0 ? (
+          <p
+            style={{
+              color: '#4B5563',
+              fontSize: '13px',
+              textAlign: 'center',
+              padding: '24px 16px',
+            }}
+          >
+            Aucun onglet dans ce groupe.
+          </p>
+        ) : (
+          group.tabs.map((tab) => (
+            <a
+              key={tab.id}
+              href={tab.url}
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                padding: '8px 16px',
+                textDecoration: 'none',
+                borderBottom: '1px solid rgba(255,255,255,0.04)',
+                transition: 'background 0.15s',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'transparent';
+              }}
+            >
+              {/* Favicon */}
+              <div style={{ width: '16px', height: '16px', flexShrink: 0 }}>
+                {tab.favicon ? (
+                  <img
+                    src={tab.favicon}
+                    width={16}
+                    height={16}
+                    style={{ borderRadius: '2px' }}
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      width: '16px',
+                      height: '16px',
+                      background: group.color,
+                      borderRadius: '2px',
+                      opacity: 0.6,
+                    }}
+                  />
+                )}
+              </div>
+              {/* Title + URL */}
+              <div style={{ flex: 1, overflow: 'hidden' }}>
+                <div
+                  style={{
+                    color: '#E5E7EB',
+                    fontSize: '13px',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {tab.title || 'Sans titre'}
+                </div>
+                <div
+                  style={{
+                    color: '#4B5563',
+                    fontSize: '11px',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {tab.url}
+                </div>
+              </div>
+            </a>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function Dashboard() {
   const groups = useGroupStore((s) => s.groups);
   const selectedGroupId = useGroupStore((s) => s.selectedGroupId);
@@ -197,7 +362,9 @@ export function Dashboard() {
               width={dimensions.width}
               height={dimensions.height}
               zoom={zoom}
-              onGroupClick={(group) => selectGroup(group.id)}
+              onGroupClick={(group) => {
+                selectGroup(group.id === selectedGroupId ? null : group.id);
+              }}
               onGroupHover={(group) => setHoveredGroupId(group?.id ?? null)}
               selectedGroupId={selectedGroupId}
               onGroupRightClick={handleGroupRightClick}
@@ -206,6 +373,13 @@ export function Dashboard() {
             <EmptyState />
           )}
         </div>
+
+        {/* Detail panel (tab list) */}
+        {selectedGroupId &&
+          (() => {
+            const g = groups.find((gr) => gr.id === selectedGroupId);
+            return g ? <GroupDetailPanel group={g} onClose={() => selectGroup(null)} /> : null;
+          })()}
 
         {/* Zoom controls */}
         <div

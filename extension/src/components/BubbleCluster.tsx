@@ -133,7 +133,15 @@ export const BubbleCluster = memo(function BubbleCluster({
                 setHoveredId(group.id);
                 onGroupHover(group);
               }}
-              onMouseLeave={() => {
+              onMouseLeave={(e) => {
+                // Ne quitte le hover que si on sort vraiment du <g> principal
+                // (pas d'un élément enfant vers un autre enfant)
+                try {
+                  const related = e.relatedTarget as Node | null;
+                  if (related && e.currentTarget.contains(related)) return;
+                } catch {
+                  // jsdom / environments sans Node complet — on ignore
+                }
                 setHoveredId(null);
                 onGroupHover(null);
               }}
