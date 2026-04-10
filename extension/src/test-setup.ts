@@ -17,6 +17,12 @@ if (typeof globalThis.requestAnimationFrame === 'undefined') {
 
 // Mock Chrome APIs for tests
 const chromeMock = {
+  identity: {
+    getAuthToken: vi.fn((_options: unknown, callback: (token: string) => void) =>
+      callback('mock-token'),
+    ),
+    removeCachedAuthToken: vi.fn((_options: unknown, callback: () => void) => callback()),
+  },
   runtime: {
     onInstalled: { addListener: vi.fn() },
     onMessage: {
@@ -45,6 +51,7 @@ const chromeMock = {
     local: {
       get: vi.fn().mockResolvedValue({}),
       set: vi.fn().mockResolvedValue(undefined),
+      remove: vi.fn().mockResolvedValue(undefined),
     },
   },
 };

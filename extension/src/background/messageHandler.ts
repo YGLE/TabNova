@@ -7,6 +7,11 @@ import {
   openAllTabsInGroup,
 } from './chromeApi';
 import { mapChromeGroupToTabGroup } from './chromeMapper';
+import { useSyncStore } from '@store/syncStore';
+import { loadSyncConfig, saveSyncConfig } from '@services/syncProviderFactory';
+import { createSyncProvider } from '@services/syncProviderFactory';
+import { syncWithProvider } from '@services/syncEngine';
+import type { SyncConfig } from '@services/syncProviderFactory';
 
 export type MessageType =
   | 'GET_ALL_GROUPS'
@@ -16,7 +21,10 @@ export type MessageType =
   | 'PING'
   | 'CREATE_GROUP'
   | 'UPDATE_GROUP'
-  | 'DELETE_GROUP';
+  | 'DELETE_GROUP'
+  | 'START_SYNC'
+  | 'CONFIGURE_SYNC'
+  | 'GET_SYNC_STATUS';
 
 export interface Message {
   type: MessageType;
@@ -78,6 +86,18 @@ export function handleMessage(
         sendResponse
       );
       return true; // keep channel open for async response
+
+    case 'START_SYNC':
+      handleStartSync(sendResponse);
+      return true;
+
+    case 'CONFIGURE_SYNC':
+      handleConfigureSync(request.payload as SyncConfig, sendResponse);
+      return true;
+
+    case 'GET_SYNC_STATUS':
+      handleGetSyncStatus(sendResponse);
+      break;
 
     default:
       console.warn('[TabNova] Unknown message type:', request.type);
@@ -162,4 +182,55 @@ function handleDeleteGroup(
   removeChromeGroup(chromeGroupId)
     .then(() => sendResponse({ success: true }))
     .catch((error: unknown) => sendResponse({ success: false, error: String(error) }));
+}
+
+async function handleStartSync(
+  sendResponse: (response: MessageResponse) => void
+): Promise<void> {
+  try {
+    const config = await loadSyncConfig();
+    if (!config) {
+      sendResponse({ success: false, error: 'No sync config found' });
+      return;
+    }
+    const provider = await createSyncProvider(config);
+    if (!provider) {
+      sendResponse({ success: false, error: 'Failed to create sync provider' });
+      return;
+    }
+    // Retrieve encryption key and device ID from storage before syncing.
+    // These are set during initial setup; throw a clear error if missing.
+    const stored = await chrome.storage.local.get(['tabnova_enc_key', 'tabnova_device_id']);
+    const rawKey = stored['tabnova_enc_key'] as string | undefined;
+    const deviceId = stored['tabnova_device_id'] as string | undefined;
+    if (!rawKey || !deviceId) {
+      sendResponse({ success: false, error: 'Encryption key or device ID not configured' });
+      return;
+    }
+    const { importKey } = await import('@services/encryptionService');
+    const encryptionKey = await importKey(rawKey);
+    await syncWithProvider(provider, encryptionKey, deviceId);
+    sendResponse({ success: true });
+  } catch (error) {
+    sendResponse({ success: false, error: String(error) });
+  }
+}
+
+async function handleConfigureSync(
+  payload: SyncConfig,
+  sendResponse: (response: MessageResponse) => void
+): Promise<void> {
+  try {
+    await saveSyncConfig(payload);
+    sendResponse({ success: true });
+  } catch (error) {
+    sendResponse({ success: false, error: String(error) });
+  }
+}
+
+function handleGetSyncStatus(
+  sendResponse: (response: MessageResponse) => void
+): void {
+  const state = useSyncStore.getState();
+  sendResponse({ success: true, data: state });
 }
