@@ -2,19 +2,30 @@
   "manifest_version": 3,
   "name": "TabNova",
   "version": "0.1.0",
-  "description": "Web Bookmarks Manager - Revolutionary tab groups management with interactive bubble visualization",
+  "description": "Gestionnaire de groupes d'onglets avec visualisation en bulles interactives. Synchronisation multi-appareils incluse.",
 
   "permissions": [
     "tabGroups",
     "tabs",
     "storage",
     "alarms",
-    "contextMenus"
+    "contextMenus",
+    "identity",
+    "identity.email"
   ],
 
   "host_permissions": [
-    "<all_urls>"
+    "<all_urls>",
+    "https://www.googleapis.com/*",
+    "https://api.apple-cloudkit.com/*"
   ],
+
+  "oauth2": {
+    "client_id": "PLACEHOLDER_GOOGLE_CLIENT_ID",
+    "scopes": [
+      "https://www.googleapis.com/auth/drive.file"
+    ]
+  },
 
   "action": {
     "default_popup": "popup.html",
@@ -58,8 +69,12 @@
 
   "web_accessible_resources": [
     {
-      "resources": ["dashboard.html", "assets/*"],
+      "resources": ["dashboard.html", "assets/*", "icons/*"],
       "matches": ["<all_urls>"]
     }
-  ]
+  ],
+
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
 }

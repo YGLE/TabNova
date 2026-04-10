@@ -1,4 +1,4 @@
-name: CI - Tests & Build
+name: CI - TabNova
 
 on:
   push:
@@ -6,62 +6,88 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  NODE_VERSION: '20'
+
 jobs:
-  test:
+  quality:
     runs-on: ubuntu-latest
-    name: Type Check + Lint + Tests
-
+    name: Quality Gate (Type Check + Lint + Format)
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js 18
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-
-      - name: Install dependencies
-        run: npm install
-
+      - run: npm ci
       - name: TypeScript type check
         run: npm run type-check
-
       - name: ESLint
         run: npm run lint
+      - name: Prettier format check
+        run: npm run format:check
+        continue-on-error: true  # ne bloque pas le CI pour le format
 
+  test:
+    runs-on: ubuntu-latest
+    name: Tests + Coverage
+    needs: quality
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - run: npm ci
       - name: Run tests with coverage
         run: npm run test:coverage
-
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage/
+          retention-days: 7
 
   build:
     runs-on: ubuntu-latest
     name: Build Extension
     needs: test
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js 18
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-
-      - name: Install dependencies
-        run: npm install
-
+      - run: npm ci
       - name: Build extension
         run: npm run build:extension
-
+      - name: Verify store assets
+        run: node scripts/prepare-store-assets.mjs
+        continue-on-error: true
       - name: Upload extension artifact
         uses: actions/upload-artifact@v4
         with:
-          name: tabnova-extension
+          name: tabnova-extension-${{ github.sha }}
           path: dist-extension/
+          retention-days: 30
+
+  release:
+    runs-on: ubuntu-latest
+    name: Package Release (on tags)
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build:extension
+      - name: Package ZIP
+        run: npm run package:zip
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: tabnova-extension-*.zip
+          generate_release_notes: true

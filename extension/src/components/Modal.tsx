@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface ModalProps {
   isOpen: boolean;
@@ -14,7 +14,11 @@ const sizeMap: Record<NonNullable<ModalProps['size']>, string> = {
   lg: '640px',
 };
 
+const MODAL_TITLE_ID = 'modal-title';
+
 export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalProps) {
+  const panelRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (!isOpen) return;
     const handler = (e: KeyboardEvent) => {
@@ -23,6 +27,20 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
   }, [isOpen, onClose]);
+
+  // Focus trap: focus first focusable element on open, restore focus on close
+  useEffect(() => {
+    if (!isOpen) return;
+    const previousFocus = document.activeElement as HTMLElement;
+    const panel = panelRef.current;
+    if (panel) {
+      const focusable = panel.querySelector<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      );
+      focusable?.focus();
+    }
+    return () => previousFocus?.focus();
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -33,6 +51,10 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
       data-testid="modal-overlay"
     >
       <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={MODAL_TITLE_ID}
         className="bg-gray-900 border border-white/10 rounded-xl shadow-2xl"
         style={{ width: sizeMap[size], maxWidth: '95vw' }}
         onClick={(e) => e.stopPropagation()}
@@ -40,7 +62,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
       >
         {/* Header */}
         <div className="flex justify-between items-center p-4 border-b border-white/10">
-          <h2 className="text-white font-semibold text-lg">{title}</h2>
+          <h2 id={MODAL_TITLE_ID} className="text-white font-semibold text-lg">{title}</h2>
           <button
             className="text-gray-400 hover:text-white transition-colors"
             onClick={onClose}

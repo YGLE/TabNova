@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, memo } from 'react';
 import * as d3 from 'd3';
 import type { TabGroup } from '@tabnova-types/index';
 
@@ -34,7 +34,7 @@ function calcRadius(group: TabGroup): number {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export function BubbleCluster({
+export const BubbleCluster = memo(function BubbleCluster({
   groups,
   width,
   height,
@@ -120,7 +120,16 @@ export function BubbleCluster({
               key={group.id}
               transform={`translate(${x}, ${y})`}
               style={{ cursor: 'pointer' }}
+              role="button"
+              aria-label={`Groupe ${group.name}, ${group.tabs.length} onglets`}
+              tabIndex={0}
               onClick={() => onGroupClick(group)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onGroupClick(group);
+                }
+              }}
               onContextMenu={(e) => {
                 e.preventDefault();
                 onGroupRightClick?.(group, { x: e.clientX, y: e.clientY });
@@ -231,4 +240,4 @@ export function BubbleCluster({
       </g>
     </svg>
   );
-}
+});

@@ -36,27 +36,33 @@ export function GroupForm({
     if (error && val.trim().length > 0) setError(null);
   };
 
+  const errorId = 'group-name-error';
+
   return (
     <form onSubmit={(e) => { void handleSubmit(e); }} noValidate>
       {/* Name field */}
       <div className="mb-4">
         <div className="flex justify-between items-center mb-1">
-          <label className="text-sm text-gray-400">Nom</label>
+          <label htmlFor="group-name-input" className="text-sm text-gray-400">Nom</label>
           <span className="text-xs text-gray-500">
             {name.length}/{MAX_GROUP_NAME_LENGTH}
           </span>
         </div>
         <input
+          id="group-name-input"
           type="text"
           value={name}
           onChange={handleNameChange}
           placeholder="Nom du groupe"
           maxLength={MAX_GROUP_NAME_LENGTH}
+          aria-required="true"
+          aria-describedby={error ? errorId : undefined}
+          aria-invalid={error ? 'true' : undefined}
           className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500"
           data-testid="group-name-input"
         />
         {error && (
-          <p className="text-red-400 text-xs mt-1" role="alert">
+          <p id={errorId} className="text-red-400 text-xs mt-1" role="alert">
             {error}
           </p>
         )}
@@ -64,8 +70,8 @@ export function GroupForm({
 
       {/* Color palette */}
       <div className="mb-6">
-        <label className="text-sm text-gray-400 block mb-2">Couleur</label>
-        <div className="flex items-center gap-2 flex-wrap">
+        <label htmlFor="color-palette" className="text-sm text-gray-400 block mb-2">Couleur</label>
+        <div id="color-palette" className="flex items-center gap-2 flex-wrap">
           {GROUP_COLORS.map((c) => (
             <button
               key={c}
@@ -78,6 +84,7 @@ export function GroupForm({
               }`}
               style={{ backgroundColor: c }}
               aria-label={`Couleur ${c}`}
+              aria-pressed={color === c}
               data-testid={`color-swatch-${c}`}
             />
           ))}

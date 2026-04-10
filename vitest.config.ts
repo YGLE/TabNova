@@ -11,6 +11,19 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
+      include: ['extension/src/**/*.{ts,tsx}'],
+      exclude: [
+        // Entry points (no logic to test)
+        'extension/src/**/index.tsx',
+        'extension/src/**/index.ts',
+        'extension/src/popup/Popup.tsx',
+        'extension/src/dashboard/Dashboard.tsx',
+        // Type-only files
+        'extension/src/types/**',
+        // Test files themselves
+        '**/*.test.{ts,tsx}',
+        'extension/src/test-setup.ts',
+      ],
       thresholds: {
         global: {
           statements: 70,

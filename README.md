@@ -1,108 +1,90 @@
-# 🌟 TabNova - Web Bookmarks Manager
+# TabNova
 
-Une extension Chrome/Edge révolutionnaire qui remplace le système de groupes d'onglets natif avec une interface graphique innovante : une grappe de points flottante et interactive.
+**Gestionnaire de groupes d'onglets Chrome avec visualisation en bulles interactives.**
 
-## 🎯 Objectif
+TabNova remplace le système natif de groupes d'onglets Chrome par une interface graphique innovante : un espace visuel de "bulles" flottantes avec synchronisation multi-appareils.
 
-Transformer la gestion des favoris web en une expérience visuelle fluide et intuitive. Au lieu de listes ennuyeuses, explorez vos groupes sous forme de nuage organique avec animations spectaculaires.
+## Fonctionnalités
 
-## ✨ Fonctionnalités Principales
+- **Visualisation D3.js** — Groupes affichés en bulles colorées avec animation d'entrée
+- **Gestion complète** — Créer, renommer, supprimer, fusionner des groupes
+- **Undo/Redo** — Annuler les 5 dernières actions
+- **Sync multi-appareils** — Google Drive ou iCloud avec chiffrement AES-256
+- **Mode hors ligne** — Queue de changements, sync au retour en ligne
+- **Recherche instantanée** — Filtrage des groupes en temps réel
+- **Clavier accessible** — Navigation complète au clavier
 
-- 🌌 **Visualisation en Grappe** : Bubbles flottantes avec fond space étoilé
-- 🔄 **Sync Multi-Appareils** : Synchronisation instantanée via Google Drive ou iCloud
-- 🎨 **Personnalisation** : Couleurs prédéfinies + custom color picker
-- 📱 **PWA Mobile** : Installez sur iPhone/iPad (PHASE 2)
-- 🔍 **Recherche Intelligente** : Full-text sur title + URL + groupes
-- ⭐ **Favoris** : Épinglez les groupes importants
-- 📊 **Gestion Avancée** : Fusion, archivage, élagage automatique (18 mois)
-- 🔐 **Chiffrement** : AES-256 pour les données sync
-- ⏮️ **Undo/Redo** : Historique 5 actions
+## Installation
 
-## 🚀 Quick Start
+### Depuis les sources
 
 ```bash
-# Clone & Install
-git clone https://github.com/ygle/TabNova.git
+git clone https://github.com/YGLE/TabNova.git
 cd TabNova
 npm install
-
-# Development
-npm run dev
-
-# Build extension
 npm run build:extension
-
-# Build backend (optional)
-npm run build:backend
 ```
 
-## 📋 Project Structure
+Puis dans `chrome://extensions/` → Mode développeur → Charger l'extension non empaquetée → `dist-extension/`
 
-```
-TabNova/
-├── extension/              # Chrome/Edge extension
-│   ├── src/
-│   │   ├── background/     # Service Worker
-│   │   ├── popup/          # Popup UI
-│   │   ├── dashboard/      # Dashboard fullscreen
-│   │   ├── components/     # React components
-│   │   ├── hooks/          # Custom hooks
-│   │   ├── store/          # Zustand stores
-│   │   ├── services/       # Business logic
-│   │   ├── types/          # TypeScript types
-│   │   ├── storage/        # IndexedDB
-│   │   └── utils/          # Utilities
-│   ├── manifest.json       # Manifest V3
-│   └── public/             # Icons, assets
-├── backend/                # Optional Node.js backend
-│   ├── src/
-│   │   ├── routes/         # API endpoints
-│   │   ├── services/       # Business logic
-│   │   ├── models/         # Data models
-│   │   └── config/         # Configuration
-│   └── tests/              # Test suite
-├── docs/                   # Documentation
-├── mockups/                # Design specs & mockups
-└── .github/                # CI/CD workflows
+## Développement
+
+```bash
+npm run test          # Tests unitaires
+npm run test:coverage # Tests avec couverture
+npm run type-check    # Vérification TypeScript
+npm run lint          # ESLint
 ```
 
-## 🎨 Design
+## Stack technique
 
-- **Palette** : Noir pur (#000) + 8 couleurs de groupes
-- **Typography** : Inter (UI) + Fira Code (Code)
-- **Animations** : Explosion 800ms, hover 200ms, spring drag-drop
-- **Responsive** : 300px min width, fullscreen capable
+| Couche | Technologie |
+|--------|-------------|
+| UI | React 18 + TypeScript |
+| Visualisation | D3.js v7 |
+| État | Zustand |
+| Style | Tailwind CSS |
+| Build | Vite + Manifest V3 |
+| Tests | Vitest + Testing Library |
+| Sync | Google Drive API + CloudKit |
+| Chiffrement | AES-256-GCM (WebCrypto) |
+| Stockage | IndexedDB (idb) |
 
-Voir [Design Specifications](docs/DESIGN-SPECIFICATIONS.md)
+## Architecture
 
-## 🏗️ Architecture
+```
+extension/
+├── src/
+│   ├── background/     # Service Worker Chrome
+│   ├── components/     # Composants React (BubbleCluster, Modal, etc.)
+│   ├── hooks/          # Hooks React (useMessage, useChromeSync, etc.)
+│   ├── services/       # Logique métier (groupService, syncEngine, etc.)
+│   ├── storage/        # IndexedDB repositories
+│   ├── store/          # Zustand stores
+│   ├── types/          # Types TypeScript
+│   └── utils/          # Helpers et constantes
+├── public/
+│   ├── popup.html
+│   ├── dashboard.html
+│   └── icons/
+└── manifest.json
+```
 
-- **Frontend** : React 18 + TypeScript + D3.js
-- **Extension** : Manifest V3 (Chrome/Edge)
-- **Storage** : IndexedDB (offline-first)
-- **Sync** : Google Drive API / iCloud CloudKit / Backend custom
-- **Build** : Vite (ultra-fast)
-- **Testing** : Vitest + React Testing Library
+## Synchronisation
 
-Voir [Architecture](docs/ARCHITECTURE.md)
+TabNova supporte 2 providers de sync :
+- **Google Drive** — OAuth2 automatique, fichier `tabnova-sync.json` chiffré
+- **iCloud** — CloudKit Web Services (Container ID requis)
 
-## 📱 Timeline
+Les données sont chiffrées avec AES-256-GCM avant upload. La clé de chiffrement est partagée manuellement entre vos appareils.
 
-- **PHASE 1** (3 semaines) : Extension desktop + core features
-- **PHASE 2** (4 semaines) : PWA iOS + polish
+## Tests
 
-## 📝 User Stories
+```
+270+ tests unitaires
+Couverture: ≥ 70%
+```
 
-Toutes les US validées et documentées : [USER_STORIES.md](docs/USER_STORIES.md)
-
-## 🤝 Development Status
-
-🚧 **In Planning** - Lancement SPRINT 1 (Foundations)
-
-## 📄 License
+## Licence
 
 MIT
-
----
-
-**Made with ❤️ by YGLE**

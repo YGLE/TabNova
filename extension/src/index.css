@@ -62,11 +62,49 @@ html, body {
   height: 100%;
 }
 
-/* ── Scrollbar (webkit) ─────────────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--color-black); }
-::-webkit-scrollbar-thumb { background: var(--color-gray-dark); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--color-gray-70); }
+/* ── Focus visible global ────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid #3B82F6;
+  outline-offset: 2px;
+}
+
+/* ── Scrollbar custom (dark) ─────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* ── Text selection ──────────────────────────────────────────────────────────── */
+::selection {
+  background: rgba(59, 130, 246, 0.4);
+  color: white;
+}
+
+/* ── Reduced motion ──────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Smooth transition timing ────────────────────────────────────────────────── */
+* {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
 
 /* ── Animations ─────────────────────────────────────────────────────────────── */
 @keyframes explosion {
