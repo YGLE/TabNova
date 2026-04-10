@@ -130,14 +130,14 @@ export async function setupContextMenus(): Promise<void> {
     chrome.contextMenus.create({
       id: 'add-to-group',
       title: 'Ajouter au groupe TabNova',
-      contexts: ['tab' as chrome.contextMenus.ContextType],
+      contexts: ['page'],
     });
 
     // Create group from selected tabs
     chrome.contextMenus.create({
       id: 'create-group',
       title: 'Créer un groupe TabNova',
-      contexts: ['tab' as chrome.contextMenus.ContextType],
+      contexts: ['page'],
     });
 
     console.log('[TabNova] Context menus created');
