@@ -23,6 +23,7 @@ interface BubbleClusterProps {
   onGroupClick: (group: TabGroup) => void;
   onGroupHover: (group: TabGroup | null) => void;
   selectedGroupId: string | null;
+  onGroupRightClick?: (group: TabGroup, position: { x: number; y: number }) => void;
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -41,6 +42,7 @@ export function BubbleCluster({
   onGroupClick,
   onGroupHover,
   selectedGroupId,
+  onGroupRightClick,
 }: BubbleClusterProps) {
   const [positions, setPositions] = useState<NodePosition[]>([]);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
@@ -119,6 +121,10 @@ export function BubbleCluster({
               transform={`translate(${x}, ${y})`}
               style={{ cursor: 'pointer' }}
               onClick={() => onGroupClick(group)}
+              onContextMenu={(e) => {
+                e.preventDefault();
+                onGroupRightClick?.(group, { x: e.clientX, y: e.clientY });
+              }}
               onMouseEnter={() => {
                 setHoveredId(group.id);
                 onGroupHover(group);

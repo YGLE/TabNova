@@ -1,9 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 import { Navbar } from '@components/Navbar';
 import { SearchBar } from '@components/SearchBar';
 import { BubbleCluster } from '@components/BubbleCluster';
+import { Modal } from '@components/Modal';
+import { GroupForm } from '@components/GroupForm';
+import { ContextMenu } from '@components/ContextMenu';
+import type { ContextMenuItem } from '@components/ContextMenu';
 import { useGroupStore } from '@store/groupStore';
 import { useUIStore } from '@store/uiStore';
+import * as groupService from '@services/groupService';
+import type { TabGroup } from '@tabnova-types/index';
 
 function EmptyState() {
   return (
@@ -42,6 +49,16 @@ export function Dashboard() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
 
+  // Modal & context menu state
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingGroup, setEditingGroup] = useState<TabGroup | null>(null);
+  const [contextMenu, setContextMenu] = useState<{
+    isOpen: boolean;
+    position: { x: number; y: number };
+    group: TabGroup | null;
+  }>({ isOpen: false, position: { x: 0, y: 0 }, group: null });
+
   // Track real container size
   useEffect(() => {
     if (!containerRef.current) return;
@@ -52,6 +69,71 @@ export function Dashboard() {
     obs.observe(containerRef.current);
     return () => obs.disconnect();
   }, []);
+
+  // Handlers
+  const handleCreateGroup = async (values: { name: string; color: string }) => {
+    try {
+      await groupService.createGroup(values.name, values.color);
+      toast.success('Groupe créé');
+      setIsCreateModalOpen(false);
+    } catch {
+      toast.error('Erreur lors de la création');
+    }
+  };
+
+  const handleEditGroup = async (values: { name: string; color: string }) => {
+    if (!editingGroup) return;
+    try {
+      await groupService.updateGroup(editingGroup.id, {
+        name: values.name,
+        color: values.color,
+      });
+      toast.success('Groupe modifié');
+      setIsEditModalOpen(false);
+      setEditingGroup(null);
+    } catch {
+      toast.error('Erreur lors de la modification');
+    }
+  };
+
+  const handleDeleteGroup = async (groupId: string) => {
+    try {
+      await groupService.deleteGroup(groupId);
+      toast.success('Groupe supprimé');
+    } catch {
+      toast.error('Erreur lors de la suppression');
+    }
+  };
+
+  const handleGroupRightClick = (
+    group: TabGroup,
+    position: { x: number; y: number },
+  ) => {
+    setContextMenu({ isOpen: true, position, group });
+  };
+
+  const contextMenuItems: ContextMenuItem[] = [
+    {
+      label: 'Renommer',
+      icon: '✏️',
+      onClick: () => {
+        setEditingGroup(contextMenu.group);
+        setIsEditModalOpen(true);
+        setContextMenu((m) => ({ ...m, isOpen: false }));
+      },
+    },
+    {
+      label: 'Supprimer',
+      icon: '🗑️',
+      variant: 'danger',
+      onClick: () => {
+        if (contextMenu.group) {
+          void handleDeleteGroup(contextMenu.group.id);
+        }
+        setContextMenu((m) => ({ ...m, isOpen: false }));
+      },
+    },
+  ];
 
   return (
     <div
@@ -109,6 +191,7 @@ export function Dashboard() {
                 setHoveredGroupId(group?.id ?? null)
               }
               selectedGroupId={selectedGroupId}
+              onGroupRightClick={handleGroupRightClick}
             />
           ) : (
             <EmptyState />
@@ -165,6 +248,59 @@ export function Dashboard() {
           </button>
         </div>
       </main>
+
+      {/* FAB: Create group */}
+      <button
+        onClick={() => setIsCreateModalOpen(true)}
+        className="fixed bottom-6 right-6 w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-2xl shadow-lg z-40 flex items-center justify-center transition-colors"
+        aria-label="Créer un groupe"
+      >
+        +
+      </button>
+
+      {/* Create modal */}
+      <Modal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        title="Nouveau groupe"
+      >
+        <GroupForm
+          onSubmit={(values) => void handleCreateGroup(values)}
+          onCancel={() => setIsCreateModalOpen(false)}
+          submitLabel="Créer"
+        />
+      </Modal>
+
+      {/* Edit modal */}
+      <Modal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setEditingGroup(null);
+        }}
+        title="Modifier le groupe"
+      >
+        <GroupForm
+          initialValues={
+            editingGroup
+              ? { name: editingGroup.name, color: editingGroup.color }
+              : undefined
+          }
+          onSubmit={(values) => void handleEditGroup(values)}
+          onCancel={() => {
+            setIsEditModalOpen(false);
+            setEditingGroup(null);
+          }}
+        />
+      </Modal>
+
+      {/* Context menu */}
+      <ContextMenu
+        isOpen={contextMenu.isOpen}
+        position={contextMenu.position}
+        items={contextMenuItems}
+        onClose={() => setContextMenu((m) => ({ ...m, isOpen: false }))}
+      />
     </div>
   );
 }

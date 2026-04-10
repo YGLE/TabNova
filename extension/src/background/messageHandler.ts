@@ -33,7 +33,7 @@ export function handleMessage(
   request: Message,
   _sender: chrome.runtime.MessageSender,
   sendResponse: (response: MessageResponse) => void
-): void {
+): boolean | void {
   switch (request.type) {
     case 'PING':
       sendResponse({ success: true, data: 'pong' });
@@ -41,31 +41,43 @@ export function handleMessage(
 
     case 'GET_ALL_GROUPS':
       handleGetAllGroups(sendResponse);
-      break;
+      return true; // keep channel open for async response
 
     case 'SYNC_FROM_CHROME':
       handleSyncFromChrome(sendResponse);
-      break;
+      return true; // keep channel open for async response
 
     case 'OPEN_GROUP_TABS':
-      handleOpenGroupTabs(request.payload, sendResponse);
-      break;
+      handleOpenGroupTabs(
+        request.payload as { groupId: number },
+        sendResponse
+      );
+      return true; // keep channel open for async response
 
     case 'OPEN_DASHBOARD':
       handleOpenDashboard(sendResponse);
-      break;
+      return true; // keep channel open for async response
 
     case 'CREATE_GROUP':
-      handleCreateGroup(request.payload, sendResponse);
-      break;
+      handleCreateGroup(
+        request.payload as { tabIds: number[]; title: string; color?: string },
+        sendResponse
+      );
+      return true; // keep channel open for async response
 
     case 'UPDATE_GROUP':
-      handleUpdateGroup(request.payload, sendResponse);
-      break;
+      handleUpdateGroup(
+        request.payload as { chromeGroupId: number; title?: string },
+        sendResponse
+      );
+      return true; // keep channel open for async response
 
     case 'DELETE_GROUP':
-      handleDeleteGroup(request.payload, sendResponse);
-      break;
+      handleDeleteGroup(
+        request.payload as { chromeGroupId: number },
+        sendResponse
+      );
+      return true; // keep channel open for async response
 
     default:
       console.warn('[TabNova] Unknown message type:', request.type);
@@ -99,10 +111,10 @@ async function handleSyncFromChrome(
 }
 
 function handleOpenGroupTabs(
-  payload: unknown,
+  payload: { groupId: number },
   sendResponse: (response: MessageResponse) => void
 ): void {
-  const { groupId } = payload as { groupId: number };
+  const { groupId } = payload;
   openAllTabsInGroup(groupId)
     .then(() => sendResponse({ success: true }))
     .catch((error: unknown) => sendResponse({ success: false, error: String(error) }));
@@ -122,38 +134,31 @@ async function handleOpenDashboard(
 }
 
 function handleCreateGroup(
-  payload: unknown,
+  payload: { tabIds: number[]; title: string; color?: string },
   sendResponse: (response: MessageResponse) => void
 ): void {
-  const { tabIds, title, color } = payload as {
-    tabIds: number[];
-    title: string;
-    color?: chrome.tabGroups.ColorEnum;
-  };
-  createChromeGroup(tabIds, title, color)
-    .then((groupId) => sendResponse({ success: true, data: groupId }))
+  const { tabIds, title, color } = payload;
+  createChromeGroup(tabIds, title, color as chrome.tabGroups.ColorEnum | undefined)
+    .then((chromeGroupId) => sendResponse({ success: true, data: chromeGroupId }))
     .catch((error: unknown) => sendResponse({ success: false, error: String(error) }));
 }
 
 function handleUpdateGroup(
-  payload: unknown,
+  payload: { chromeGroupId: number; title?: string },
   sendResponse: (response: MessageResponse) => void
 ): void {
-  const { chromeGroupId, title } = payload as {
-    chromeGroupId: number;
-    title?: string;
-  };
+  const { chromeGroupId, title } = payload;
   chrome.tabGroups
     .update(chromeGroupId, { ...(title !== undefined ? { title } : {}) })
-    .then((updated) => sendResponse({ success: true, data: updated }))
+    .then(() => sendResponse({ success: true }))
     .catch((error: unknown) => sendResponse({ success: false, error: String(error) }));
 }
 
 function handleDeleteGroup(
-  payload: unknown,
+  payload: { chromeGroupId: number },
   sendResponse: (response: MessageResponse) => void
 ): void {
-  const { chromeGroupId } = payload as { chromeGroupId: number };
+  const { chromeGroupId } = payload;
   removeChromeGroup(chromeGroupId)
     .then(() => sendResponse({ success: true }))
     .catch((error: unknown) => sendResponse({ success: false, error: String(error) }));
