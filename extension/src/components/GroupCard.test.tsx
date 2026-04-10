@@ -114,10 +114,46 @@ describe('GroupCard', () => {
   it('renders at most 3 preview tabs', () => {
     const group = makeGroup({
       tabs: [
-        { id: 't1', groupId: 'g1', url: 'https://a.com', title: 'Tab A', position: 0, isStarred: false, createdAt: new Date(), updatedAt: new Date() },
-        { id: 't2', groupId: 'g1', url: 'https://b.com', title: 'Tab B', position: 1, isStarred: false, createdAt: new Date(), updatedAt: new Date() },
-        { id: 't3', groupId: 'g1', url: 'https://c.com', title: 'Tab C', position: 2, isStarred: false, createdAt: new Date(), updatedAt: new Date() },
-        { id: 't4', groupId: 'g1', url: 'https://d.com', title: 'Tab D', position: 3, isStarred: false, createdAt: new Date(), updatedAt: new Date() },
+        {
+          id: 't1',
+          groupId: 'g1',
+          url: 'https://a.com',
+          title: 'Tab A',
+          position: 0,
+          isStarred: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 't2',
+          groupId: 'g1',
+          url: 'https://b.com',
+          title: 'Tab B',
+          position: 1,
+          isStarred: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 't3',
+          groupId: 'g1',
+          url: 'https://c.com',
+          title: 'Tab C',
+          position: 2,
+          isStarred: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 't4',
+          groupId: 'g1',
+          url: 'https://d.com',
+          title: 'Tab D',
+          position: 3,
+          isStarred: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
       ],
     });
     render(<GroupCard group={group} onOpenTabs={vi.fn()} onClick={vi.fn()} />);

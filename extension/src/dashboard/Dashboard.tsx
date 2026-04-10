@@ -27,12 +27,8 @@ function EmptyState() {
         gap: '8px',
       }}
     >
-      <p style={{ fontSize: '18px', marginBottom: '8px' }}>
-        Pas de groupes trouvés.
-      </p>
-      <p style={{ fontSize: '14px' }}>
-        Créez votre premier groupe pour commencer.
-      </p>
+      <p style={{ fontSize: '18px', marginBottom: '8px' }}>Pas de groupes trouvés.</p>
+      <p style={{ fontSize: '14px' }}>Créez votre premier groupe pour commencer.</p>
     </div>
   );
 }
@@ -105,10 +101,7 @@ export function Dashboard() {
     }
   };
 
-  const handleGroupRightClick = (
-    group: TabGroup,
-    position: { x: number; y: number },
-  ) => {
+  const handleGroupRightClick = (group: TabGroup, position: { x: number; y: number }) => {
     setContextMenu({ isOpen: true, position, group });
   };
 
@@ -187,9 +180,7 @@ export function Dashboard() {
               height={dimensions.height}
               zoom={zoom}
               onGroupClick={(group) => selectGroup(group.id)}
-              onGroupHover={(group) =>
-                setHoveredGroupId(group?.id ?? null)
-              }
+              onGroupHover={(group) => setHoveredGroupId(group?.id ?? null)}
               selectedGroupId={selectedGroupId}
               onGroupRightClick={handleGroupRightClick}
             />
@@ -282,9 +273,7 @@ export function Dashboard() {
       >
         <GroupForm
           initialValues={
-            editingGroup
-              ? { name: editingGroup.name, color: editingGroup.color }
-              : undefined
+            editingGroup ? { name: editingGroup.name, color: editingGroup.color } : undefined
           }
           onSubmit={(values) => void handleEditGroup(values)}
           onCancel={() => {

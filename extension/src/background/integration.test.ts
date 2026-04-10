@@ -79,8 +79,9 @@ describe('messageHandler integration', () => {
     if (!(chrome.tabs as Record<string, unknown>)['ungroup']) {
       (chrome.tabs as Record<string, unknown>)['ungroup'] = vi.fn().mockResolvedValue(undefined);
     } else {
-      ((chrome.tabs as Record<string, unknown>)['ungroup'] as ReturnType<typeof vi.fn>)
-        .mockResolvedValue(undefined);
+      (
+        (chrome.tabs as Record<string, unknown>)['ungroup'] as ReturnType<typeof vi.fn>
+      ).mockResolvedValue(undefined);
     }
   });
 

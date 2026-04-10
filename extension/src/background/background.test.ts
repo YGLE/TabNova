@@ -15,26 +15,18 @@ describe('messageHandler', () => {
 
   it('handles unknown message type', () => {
     handleMessage(
-      { type: 'UNKNOWN' as any },
+      { type: 'UNKNOWN' as unknown as 'PING' },
       {} as chrome.runtime.MessageSender,
       sendResponse
     );
-    expect(sendResponse).toHaveBeenCalledWith(
-      expect.objectContaining({ success: false })
-    );
+    expect(sendResponse).toHaveBeenCalledWith(expect.objectContaining({ success: false }));
   });
 
   it('handles GET_ALL_GROUPS', async () => {
     // Chrome mock is set up in test-setup.ts
-    handleMessage(
-      { type: 'GET_ALL_GROUPS' },
-      {} as chrome.runtime.MessageSender,
-      sendResponse
-    );
+    handleMessage({ type: 'GET_ALL_GROUPS' }, {} as chrome.runtime.MessageSender, sendResponse);
     // Wait for async response
-    await new Promise(resolve => setTimeout(resolve, 10));
-    expect(sendResponse).toHaveBeenCalledWith(
-      expect.objectContaining({ success: true })
-    );
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    expect(sendResponse).toHaveBeenCalledWith(expect.objectContaining({ success: true }));
   });
 });

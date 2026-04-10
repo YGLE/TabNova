@@ -35,7 +35,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
     const panel = panelRef.current;
     if (panel) {
       const focusable = panel.querySelector<HTMLElement>(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
       );
       focusable?.focus();
     }
@@ -62,7 +62,9 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
       >
         {/* Header */}
         <div className="flex justify-between items-center p-4 border-b border-white/10">
-          <h2 id={MODAL_TITLE_ID} className="text-white font-semibold text-lg">{title}</h2>
+          <h2 id={MODAL_TITLE_ID} className="text-white font-semibold text-lg">
+            {title}
+          </h2>
           <button
             className="text-gray-400 hover:text-white transition-colors"
             onClick={onClose}

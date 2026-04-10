@@ -21,9 +21,7 @@ const DEFAULT_COLOR = GROUP_COLORS[GROUP_COLORS.length - 1];
 /**
  * Maps a Chrome color string to a hex color value.
  */
-export function mapChromeColorToHex(
-  chromeColor: chrome.tabGroups.ColorEnum | undefined
-): string {
+export function mapChromeColorToHex(chromeColor: chrome.tabGroups.ColorEnum | undefined): string {
   if (!chromeColor) return DEFAULT_COLOR;
   return COLOR_MAP[chromeColor] ?? DEFAULT_COLOR;
 }
@@ -31,10 +29,7 @@ export function mapChromeColorToHex(
 /**
  * Maps a chrome.tabs.Tab to a TabNova Tab.
  */
-export function mapChromeTabToTab(
-  chromeTab: chrome.tabs.Tab,
-  groupId: string
-): Tab {
+export function mapChromeTabToTab(chromeTab: chrome.tabs.Tab, groupId: string): Tab {
   const now = new Date();
   return {
     id: generateId(),

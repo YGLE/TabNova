@@ -32,7 +32,8 @@ export const GroupCard = memo(function GroupCard({ group, onOpenTabs, onClick }:
             style={{ backgroundColor: group.color }}
           />
           <span className="font-medium text-white truncate">
-            {group.isPinned ? '⭐ ' : ''}{group.name}
+            {group.isPinned ? '⭐ ' : ''}
+            {group.name}
           </span>
         </div>
         <span className="text-xs text-gray-400 flex-shrink-0 ml-2">

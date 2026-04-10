@@ -11,7 +11,7 @@ vi.mock('d3', () => ({
     on: vi.fn().mockImplementation(function (
       this: Record<string, unknown>,
       event: string,
-      cb: () => void,
+      cb: () => void
     ) {
       // Immediately invoke the 'end' callback so positions are set
       if (event === 'end') cb();
@@ -90,9 +90,7 @@ describe('BubbleCluster', () => {
 
   it('calls onGroupClick when bubble clicked', () => {
     const onGroupClick = vi.fn();
-    const { container } = render(
-      <BubbleCluster {...defaultProps} onGroupClick={onGroupClick} />,
-    );
+    const { container } = render(<BubbleCluster {...defaultProps} onGroupClick={onGroupClick} />);
     const firstBubble = container.querySelector('[data-testid="bubble-group-1"]');
     expect(firstBubble).toBeTruthy();
     fireEvent.click(firstBubble!);
@@ -102,9 +100,7 @@ describe('BubbleCluster', () => {
 
   it('calls onGroupHover on mouse enter', () => {
     const onGroupHover = vi.fn();
-    const { container } = render(
-      <BubbleCluster {...defaultProps} onGroupHover={onGroupHover} />,
-    );
+    const { container } = render(<BubbleCluster {...defaultProps} onGroupHover={onGroupHover} />);
     const firstBubble = container.querySelector('[data-testid="bubble-group-1"]');
     expect(firstBubble).toBeTruthy();
     fireEvent.mouseEnter(firstBubble!);
@@ -114,9 +110,7 @@ describe('BubbleCluster', () => {
 
   it('calls onGroupHover with null on mouse leave', () => {
     const onGroupHover = vi.fn();
-    const { container } = render(
-      <BubbleCluster {...defaultProps} onGroupHover={onGroupHover} />,
-    );
+    const { container } = render(<BubbleCluster {...defaultProps} onGroupHover={onGroupHover} />);
     const firstBubble = container.querySelector('[data-testid="bubble-group-1"]');
     expect(firstBubble).toBeTruthy();
     fireEvent.mouseLeave(firstBubble!);
@@ -134,9 +128,7 @@ describe('BubbleCluster', () => {
   });
 
   it('applies selected styling when selectedGroupId matches', () => {
-    const { container } = render(
-      <BubbleCluster {...defaultProps} selectedGroupId="1" />,
-    );
+    const { container } = render(<BubbleCluster {...defaultProps} selectedGroupId="1" />);
     // The selected bubble's circle should have white stroke
     const firstBubble = container.querySelector('[data-testid="bubble-group-1"]');
     const circle = firstBubble?.querySelector('circle');
@@ -149,31 +141,19 @@ describe('BubbleCluster', () => {
       id: '3',
       name: 'A Very Long Group Name',
     });
-    render(
-      <BubbleCluster
-        {...defaultProps}
-        groups={[longNameGroup]}
-      />,
-    );
+    render(<BubbleCluster {...defaultProps} groups={[longNameGroup]} />);
     // Should be truncated to 10 chars + ellipsis
     expect(screen.getByText('A Very Lon\u2026')).toBeInTheDocument();
   });
 
   it('renders group name as-is when 12 chars or fewer', () => {
     const shortNameGroup = makeGroup({ id: '4', name: 'Work' });
-    render(
-      <BubbleCluster
-        {...defaultProps}
-        groups={[shortNameGroup]}
-      />,
-    );
+    render(<BubbleCluster {...defaultProps} groups={[shortNameGroup]} />);
     expect(screen.getByText('Work')).toBeInTheDocument();
   });
 
   it('renders nothing when groups array is empty', () => {
-    const { container } = render(
-      <BubbleCluster {...defaultProps} groups={[]} />,
-    );
+    const { container } = render(<BubbleCluster {...defaultProps} groups={[]} />);
     const svg = container.querySelector('svg');
     expect(svg).toBeTruthy();
     const bubbleGroups = container.querySelectorAll('[data-testid^="bubble-group-"]');

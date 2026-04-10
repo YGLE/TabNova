@@ -277,7 +277,9 @@ describe('useGroupActions', () => {
     expect(useGroupStore.getState().groups[0].name).toBe('Changed');
 
     const undoAction = useUndoStore.getState().stack[0];
-    act(() => { undoAction.undo(); });
+    act(() => {
+      undoAction.undo();
+    });
 
     const restored = useGroupStore.getState().groups[0];
     expect(restored.name).toBe('Original');
@@ -425,7 +427,9 @@ describe('useGroupActions', () => {
     expect(useGroupStore.getState().groups).toHaveLength(0);
 
     const undoAction = useUndoStore.getState().stack[0];
-    act(() => { undoAction.undo(); });
+    act(() => {
+      undoAction.undo();
+    });
 
     expect(useGroupStore.getState().groups).toHaveLength(1);
     expect(useGroupStore.getState().groups[0].name).toBe('Removed');

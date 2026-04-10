@@ -1,8 +1,5 @@
 // Mesure le temps d'exécution d'une fonction async
-export async function measureAsync<T>(
-  label: string,
-  fn: () => Promise<T>
-): Promise<T> {
+export async function measureAsync<T>(label: string, fn: () => Promise<T>): Promise<T> {
   const start = performance.now();
   try {
     const result = await fn();
@@ -23,7 +20,8 @@ export function measureRender(componentName: string): () => void {
   const start = performance.now();
   return () => {
     const duration = performance.now() - start;
-    if (duration > 16) { // 60fps = 16ms/frame
+    if (duration > 16) {
+      // 60fps = 16ms/frame
       console.warn(`[TabNova] Slow render "${componentName}": ${duration.toFixed(1)}ms`);
     }
   };

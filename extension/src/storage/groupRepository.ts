@@ -37,16 +37,16 @@ export async function getGroupById(id: string): Promise<TabGroup | undefined> {
  */
 export async function updateGroup(
   id: string,
-  patch: Partial<TabGroup>,
+  patch: Partial<TabGroup>
 ): Promise<TabGroup | undefined> {
   const db = await getDB();
-  const existing = await db.get('groups', id) as TabGroup | undefined;
+  const existing = (await db.get('groups', id)) as TabGroup | undefined;
   if (!existing) return undefined;
 
   const updated: TabGroup = {
     ...existing,
     ...patch,
-    id,                       // never overwrite the key
+    id, // never overwrite the key
     updatedAt: new Date(),
   };
   await db.put('groups', updated);

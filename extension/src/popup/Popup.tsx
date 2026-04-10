@@ -70,13 +70,7 @@ function Footer({
 }
 
 export function Popup() {
-  const {
-    groups,
-    filteredGroups,
-    searchQuery,
-    syncFromChrome,
-    isSyncing,
-  } = useTabGroups();
+  const { groups, filteredGroups, searchQuery, syncFromChrome, isSyncing } = useTabGroups();
 
   const openDashboard = () => {
     chrome.runtime.sendMessage({ type: 'OPEN_DASHBOARD' });
@@ -119,11 +113,7 @@ export function Popup() {
         )}
       </div>
 
-      <Footer
-        onSync={syncFromChrome}
-        onOpenDashboard={openDashboard}
-        isSyncing={isSyncing}
-      />
+      <Footer onSync={syncFromChrome} onOpenDashboard={openDashboard} isSyncing={isSyncing} />
     </div>
   );
 }

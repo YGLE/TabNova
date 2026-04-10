@@ -174,7 +174,7 @@ describe('syncWithProvider', () => {
     };
 
     await expect(syncWithProvider(mockProvider, makeFakeKey(), 'device-1')).rejects.toThrow(
-      'Network error',
+      'Network error'
     );
     expect(useSyncStore.getState().syncStatus).toBe('error');
     expect(useSyncStore.getState().error).toContain('Network error');
@@ -191,7 +191,7 @@ describe('queueOfflineSync / flushOfflineQueue', () => {
     expect(chrome.storage.local.set).toHaveBeenCalledWith(
       expect.objectContaining({
         tabnova_offline_queue: expect.any(String),
-      }),
+      })
     );
   });
 
@@ -203,7 +203,9 @@ describe('queueOfflineSync / flushOfflineQueue', () => {
 
     // Simulate a queued entry
     vi.mocked(chrome.storage.local.get).mockImplementation(() =>
-      Promise.resolve({ tabnova_offline_queue: JSON.stringify({ groups: [], timestamp: Date.now() }) }),
+      Promise.resolve({
+        tabnova_offline_queue: JSON.stringify({ groups: [], timestamp: Date.now() }),
+      })
     );
 
     await flushOfflineQueue(mockProvider, makeFakeKey(), 'device-1');

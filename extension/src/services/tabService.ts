@@ -51,14 +51,14 @@ export async function removeTab(groupId: string, tabId: string): Promise<void> {
 export async function updateTab(
   groupId: string,
   tabId: string,
-  patch: Partial<Pick<Tab, 'title' | 'url' | 'favicon' | 'isStarred'>>,
+  patch: Partial<Pick<Tab, 'title' | 'url' | 'favicon' | 'isStarred'>>
 ): Promise<void> {
   const { groups, updateGroup } = useGroupStore.getState();
   const group = groups.find((g) => g.id === groupId);
   if (!group) return;
 
   const updatedTabs = group.tabs.map((t) =>
-    t.id === tabId ? { ...t, ...patch, updatedAt: new Date() } : t,
+    t.id === tabId ? { ...t, ...patch, updatedAt: new Date() } : t
   );
   updateGroup(groupId, { tabs: updatedTabs });
 }

@@ -18,8 +18,8 @@ interface ProviderCard {
 
 const PROVIDERS: ProviderCard[] = [
   { id: 'google-drive', label: 'Google Drive', description: 'Sync via votre compte Google' },
-  { id: 'icloud',       label: 'iCloud',        description: 'Sync via votre compte Apple' },
-  { id: 'none',         label: 'Aucune',         description: 'Désactiver la synchronisation' },
+  { id: 'icloud', label: 'iCloud', description: 'Sync via votre compte Apple' },
+  { id: 'none', label: 'Aucune', description: 'Désactiver la synchronisation' },
 ];
 
 function generateRandomKey(): string {
@@ -41,11 +41,14 @@ export function SyncSettingsModal({ isOpen, onClose }: SyncSettingsModalProps) {
     await sendMessage('CONFIGURE_SYNC', {
       provider: selectedProvider,
       encryptionKey,
-      icloudConfig: selectedProvider === 'icloud' ? {
-        containerIdentifier: icloudContainer,
-        apiToken: icloudApiToken,
-        environment: 'production',
-      } : undefined,
+      icloudConfig:
+        selectedProvider === 'icloud'
+          ? {
+              containerIdentifier: icloudContainer,
+              apiToken: icloudApiToken,
+              environment: 'production',
+            }
+          : undefined,
     });
     onClose();
   }, [sendMessage, selectedProvider, encryptionKey, icloudContainer, icloudApiToken, onClose]);
@@ -69,12 +72,9 @@ export function SyncSettingsModal({ isOpen, onClose }: SyncSettingsModalProps) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Paramètres de synchronisation" size="md">
       <div className="flex flex-col gap-5">
-
         {/* Section 1: Provider selection */}
         <section>
-          <h3 className="text-white text-sm font-semibold mb-3">
-            Méthode de synchronisation
-          </h3>
+          <h3 className="text-white text-sm font-semibold mb-3">Méthode de synchronisation</h3>
           <div className="flex gap-2" data-testid="provider-cards">
             {PROVIDERS.map((p) => (
               <button
@@ -96,9 +96,7 @@ export function SyncSettingsModal({ isOpen, onClose }: SyncSettingsModalProps) {
 
         {/* Section 2: Current status */}
         <section>
-          <h3 className="text-white text-sm font-semibold mb-2">
-            Statut actuel
-          </h3>
+          <h3 className="text-white text-sm font-semibold mb-2">Statut actuel</h3>
           <SyncStatusBadge />
         </section>
 
@@ -150,9 +148,7 @@ export function SyncSettingsModal({ isOpen, onClose }: SyncSettingsModalProps) {
 
         {/* Section 4: Encryption key */}
         <section>
-          <h3 className="text-white text-sm font-semibold mb-1">
-            Clé de chiffrement
-          </h3>
+          <h3 className="text-white text-sm font-semibold mb-1">Clé de chiffrement</h3>
           <p className="text-gray-400 text-xs mb-2">
             Cette clé chiffre vos données. Partagez-la entre vos appareils.
           </p>

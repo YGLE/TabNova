@@ -33,7 +33,7 @@ export function formatRelativeTime(date: Date): string {
   const diffMin = Math.floor(diffMs / (1000 * 60));
   const diffH = Math.floor(diffMs / (1000 * 60 * 60));
 
-  if (diffMin < 1) return 'à l\'instant';
+  if (diffMin < 1) return "à l'instant";
   if (diffMin < 60) return `il y a ${diffMin} min`;
   return `il y a ${diffH} h`;
 }

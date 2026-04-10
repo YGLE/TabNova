@@ -48,7 +48,7 @@ export async function recordChange(
   type: Change['type'],
   entity: Change['entity'],
   entityId: string,
-  data?: unknown,
+  data?: unknown
 ): Promise<void> {
   const db = await getDB();
   const change: Change = {
@@ -82,7 +82,7 @@ export async function getChangesSince(since: Date): Promise<Change[]> {
 export async function syncWithProvider(
   provider: SyncProvider,
   encryptionKey: CryptoKey,
-  deviceId: string,
+  deviceId: string
 ): Promise<void> {
   const { setSyncStatus, setLastSyncAt, setError } = useSyncStore.getState();
   setSyncStatus('syncing');
@@ -100,7 +100,7 @@ export async function syncWithProvider(
       const remoteJson = await decrypt(
         remoteEncrypted.ciphertext,
         remoteEncrypted.iv,
-        encryptionKey,
+        encryptionKey
       );
       const remote: SyncPayload = JSON.parse(remoteJson) as SyncPayload;
 
@@ -164,7 +164,7 @@ export async function queueOfflineSync(groups: TabGroup[]): Promise<void> {
 export async function flushOfflineQueue(
   provider: SyncProvider,
   encryptionKey: CryptoKey,
-  deviceId: string,
+  deviceId: string
 ): Promise<void> {
   let raw: string | null = null;
   try {

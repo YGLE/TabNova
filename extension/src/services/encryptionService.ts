@@ -11,14 +11,14 @@ export async function deriveKey(password: string, salt: Uint8Array): Promise<Cry
     enc.encode(password) as Uint8Array<ArrayBuffer>,
     'PBKDF2',
     false,
-    ['deriveBits', 'deriveKey'],
+    ['deriveBits', 'deriveKey']
   );
   return crypto.subtle.deriveKey(
     { name: 'PBKDF2', salt: salt as Uint8Array<ArrayBuffer>, iterations: 100000, hash: 'SHA-256' },
     keyMaterial,
     { name: 'AES-GCM', length: 256 },
     true,
-    ['encrypt', 'decrypt'],
+    ['encrypt', 'decrypt']
   );
 }
 
@@ -35,14 +35,14 @@ export function generateIV(): Uint8Array {
 /** Encrypts a UTF-8 string, returning base64-encoded ciphertext and IV. */
 export async function encrypt(
   data: string,
-  key: CryptoKey,
+  key: CryptoKey
 ): Promise<{ ciphertext: string; iv: string }> {
   const enc = new TextEncoder();
   const iv = generateIV();
   const encrypted = await crypto.subtle.encrypt(
     { name: 'AES-GCM', iv: iv as Uint8Array<ArrayBuffer> },
     key,
-    enc.encode(data) as Uint8Array<ArrayBuffer>,
+    enc.encode(data) as Uint8Array<ArrayBuffer>
   );
   return {
     ciphertext: btoa(String.fromCharCode(...new Uint8Array(encrypted))),
@@ -54,9 +54,8 @@ export async function encrypt(
 export async function decrypt(ciphertext: string, iv: string, key: CryptoKey): Promise<string> {
   const dec = new TextDecoder();
   const ivBuf = Uint8Array.from(atob(iv), (c) => c.charCodeAt(0)) as Uint8Array<ArrayBuffer>;
-  const dataBuf = Uint8Array.from(
-    atob(ciphertext),
-    (c) => c.charCodeAt(0),
+  const dataBuf = Uint8Array.from(atob(ciphertext), (c) =>
+    c.charCodeAt(0)
   ) as Uint8Array<ArrayBuffer>;
   const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: ivBuf }, key, dataBuf);
   return dec.decode(decrypted);

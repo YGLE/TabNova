@@ -41,18 +41,15 @@ export async function getTabById(id: string): Promise<Tab | undefined> {
  * UPDATE – merges patch into the existing record, bumps updatedAt, and
  * returns the updated tab.  Returns undefined when the tab does not exist.
  */
-export async function updateTab(
-  id: string,
-  patch: Partial<Tab>,
-): Promise<Tab | undefined> {
+export async function updateTab(id: string, patch: Partial<Tab>): Promise<Tab | undefined> {
   const db = await getDB();
-  const existing = await db.get('tabs', id) as Tab | undefined;
+  const existing = (await db.get('tabs', id)) as Tab | undefined;
   if (!existing) return undefined;
 
   const updated: Tab = {
     ...existing,
     ...patch,
-    id,                       // never overwrite the key
+    id, // never overwrite the key
     updatedAt: new Date(),
   };
   await db.put('tabs', updated);

@@ -18,7 +18,7 @@ describe('ContextMenu', () => {
         position={defaultPosition}
         items={defaultItems}
         onClose={vi.fn()}
-      />,
+      />
     );
     expect(container.firstChild).toBeNull();
   });
@@ -30,7 +30,7 @@ describe('ContextMenu', () => {
         position={defaultPosition}
         items={defaultItems}
         onClose={vi.fn()}
-      />,
+      />
     );
     expect(screen.getByText('Renommer')).toBeInTheDocument();
     expect(screen.getByText('Supprimer')).toBeInTheDocument();
@@ -38,16 +38,9 @@ describe('ContextMenu', () => {
 
   it('calls item onClick', () => {
     const onClick = vi.fn();
-    const items: ContextMenuItem[] = [
-      { label: 'Action', onClick },
-    ];
+    const items: ContextMenuItem[] = [{ label: 'Action', onClick }];
     render(
-      <ContextMenu
-        isOpen={true}
-        position={defaultPosition}
-        items={items}
-        onClose={vi.fn()}
-      />,
+      <ContextMenu isOpen={true} position={defaultPosition} items={items} onClose={vi.fn()} />
     );
     fireEvent.click(screen.getByText('Action'));
     expect(onClick).toHaveBeenCalledTimes(1);
@@ -61,7 +54,7 @@ describe('ContextMenu', () => {
         position={defaultPosition}
         items={defaultItems}
         onClose={onClose}
-      />,
+      />
     );
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(onClose).toHaveBeenCalledTimes(1);
@@ -74,7 +67,7 @@ describe('ContextMenu', () => {
         position={defaultPosition}
         items={defaultItems}
         onClose={vi.fn()}
-      />,
+      />
     );
     const dangerLabel = screen.getByText('Supprimer');
     expect(dangerLabel).toHaveClass('text-red-400');

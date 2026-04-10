@@ -81,9 +81,7 @@ describe('tabRepository', () => {
     expect(updated).toBeDefined();
     expect(updated?.title).toBe('New Title');
     expect(updated?.id).toBe(tab.id);
-    expect(updated?.updatedAt.getTime()).toBeGreaterThanOrEqual(
-      tab.updatedAt.getTime(),
-    );
+    expect(updated?.updatedAt.getTime()).toBeGreaterThanOrEqual(tab.updatedAt.getTime());
   });
 
   it('returns undefined when updating non-existent tab', async () => {

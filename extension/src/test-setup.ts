@@ -19,7 +19,7 @@ if (typeof globalThis.requestAnimationFrame === 'undefined') {
 const chromeMock = {
   identity: {
     getAuthToken: vi.fn((_options: unknown, callback: (token: string) => void) =>
-      callback('mock-token'),
+      callback('mock-token')
     ),
     removeCachedAuthToken: vi.fn((_options: unknown, callback: () => void) => callback()),
   },

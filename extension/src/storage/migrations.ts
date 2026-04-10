@@ -1,10 +1,6 @@
 import type { IDBPDatabase } from 'idb';
 
-export function runMigrations(
-  db: IDBPDatabase,
-  oldVersion: number,
-  newVersion: number
-): void {
+export function runMigrations(db: IDBPDatabase, oldVersion: number, newVersion: number): void {
   console.log(`[TabNova] DB migration: v${oldVersion} → v${newVersion}`);
 
   if (oldVersion < 1) {

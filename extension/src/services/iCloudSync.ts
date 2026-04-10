@@ -10,7 +10,7 @@ const ICLOUD_RECORD_NAME = 'main-sync';
 
 export interface iCloudConfig {
   containerIdentifier: string; // e.g. 'iCloud.com.tabnova'
-  apiToken: string;            // CloudKit Web Services API token
+  apiToken: string; // CloudKit Web Services API token
   environment: 'development' | 'production';
 }
 
@@ -62,14 +62,11 @@ export class iCloudSyncProvider implements SyncProvider {
       ],
     };
 
-    const resp = await fetch(
-      `${this.baseUrl}/records/modify?ckAPIToken=${this.config.apiToken}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      },
-    );
+    const resp = await fetch(`${this.baseUrl}/records/modify?ckAPIToken=${this.config.apiToken}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
 
     if (!resp.ok) {
       throw new Error(`iCloud upload failed: ${resp.status}`);
@@ -78,16 +75,13 @@ export class iCloudSyncProvider implements SyncProvider {
 
   /** Downloads the encrypted payload from iCloud CloudKit, or null if not found. */
   async download(): Promise<EncryptedPayload | null> {
-    const resp = await fetch(
-      `${this.baseUrl}/records/lookup?ckAPIToken=${this.config.apiToken}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          records: [{ recordName: ICLOUD_RECORD_NAME }],
-        }),
-      },
-    );
+    const resp = await fetch(`${this.baseUrl}/records/lookup?ckAPIToken=${this.config.apiToken}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        records: [{ recordName: ICLOUD_RECORD_NAME }],
+      }),
+    });
 
     if (!resp.ok) return null;
 

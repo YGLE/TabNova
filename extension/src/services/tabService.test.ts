@@ -64,7 +64,9 @@ describe('tabService', () => {
   });
 
   it('does nothing when updating tab in non-existent group', async () => {
-    await expect(updateTab('nonexistent-group', 'tab-id', { title: 'Test' })).resolves.toBeUndefined();
+    await expect(
+      updateTab('nonexistent-group', 'tab-id', { title: 'Test' })
+    ).resolves.toBeUndefined();
   });
 
   it('adds multiple tabs to the same group', async () => {

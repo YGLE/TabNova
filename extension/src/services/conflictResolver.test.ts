@@ -110,9 +110,7 @@ describe('applyChanges', () => {
   it('applies CREATE change', () => {
     const groups: TabGroup[] = [];
     const newGroup = makeGroup({ id: 'g-new', name: 'New Group' });
-    const changes: Change[] = [
-      makeChange({ type: 'CREATE', entityId: 'g-new', data: newGroup }),
-    ];
+    const changes: Change[] = [makeChange({ type: 'CREATE', entityId: 'g-new', data: newGroup })];
     const result = applyChanges(groups, changes);
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe('g-new');
@@ -128,13 +126,8 @@ describe('applyChanges', () => {
   });
 
   it('applies DELETE change', () => {
-    const groups: TabGroup[] = [
-      makeGroup({ id: 'g1' }),
-      makeGroup({ id: 'g2' }),
-    ];
-    const changes: Change[] = [
-      makeChange({ type: 'DELETE', entityId: 'g1' }),
-    ];
+    const groups: TabGroup[] = [makeGroup({ id: 'g1' }), makeGroup({ id: 'g2' })];
+    const changes: Change[] = [makeChange({ type: 'DELETE', entityId: 'g1' })];
     const result = applyChanges(groups, changes);
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe('g2');
@@ -142,9 +135,7 @@ describe('applyChanges', () => {
 
   it('skips TAB changes (only processes GROUP)', () => {
     const groups: TabGroup[] = [makeGroup({ id: 'g1' })];
-    const changes: Change[] = [
-      makeChange({ type: 'DELETE', entity: 'TAB', entityId: 'g1' }),
-    ];
+    const changes: Change[] = [makeChange({ type: 'DELETE', entity: 'TAB', entityId: 'g1' })];
     const result = applyChanges(groups, changes);
     // Group must not be deleted because entity is TAB
     expect(result).toHaveLength(1);
@@ -154,7 +145,11 @@ describe('applyChanges', () => {
     const existing = makeGroup({ id: 'g1', name: 'Existing' });
     const groups: TabGroup[] = [existing];
     const changes: Change[] = [
-      makeChange({ type: 'CREATE', entityId: 'g1', data: makeGroup({ id: 'g1', name: 'Duplicate' }) }),
+      makeChange({
+        type: 'CREATE',
+        entityId: 'g1',
+        data: makeGroup({ id: 'g1', name: 'Duplicate' }),
+      }),
     ];
     const result = applyChanges(groups, changes);
     expect(result).toHaveLength(1);

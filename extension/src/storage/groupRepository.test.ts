@@ -68,9 +68,7 @@ describe('groupRepository', () => {
     expect(updated?.name).toBe('Updated');
     expect(updated?.id).toBe(group.id);
     // updatedAt should have been refreshed
-    expect(updated?.updatedAt.getTime()).toBeGreaterThanOrEqual(
-      group.updatedAt.getTime(),
-    );
+    expect(updated?.updatedAt.getTime()).toBeGreaterThanOrEqual(group.updatedAt.getTime());
   });
 
   it('returns undefined when updating a non-existent group', async () => {

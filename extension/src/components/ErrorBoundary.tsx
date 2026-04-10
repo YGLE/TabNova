@@ -26,19 +26,21 @@ export class ErrorBoundary extends Component<Props, State> {
 
   render(): ReactNode {
     if (this.state.hasError) {
-      return this.props.fallback ?? (
-        <div className="flex items-center justify-center h-full text-center p-6">
-          <div>
-            <p className="text-red-400 font-semibold mb-2">Une erreur est survenue</p>
-            <p className="text-gray-500 text-sm mb-4">{this.state.error?.message}</p>
-            <button
-              onClick={() => this.setState({ hasError: false, error: null })}
-              className="text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-4 py-2"
-            >
-              Réessayer
-            </button>
+      return (
+        this.props.fallback ?? (
+          <div className="flex items-center justify-center h-full text-center p-6">
+            <div>
+              <p className="text-red-400 font-semibold mb-2">Une erreur est survenue</p>
+              <p className="text-gray-500 text-sm mb-4">{this.state.error?.message}</p>
+              <button
+                onClick={() => this.setState({ hasError: false, error: null })}
+                className="text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-4 py-2"
+              >
+                Réessayer
+              </button>
+            </div>
           </div>
-        </div>
+        )
       );
     }
     return this.props.children;

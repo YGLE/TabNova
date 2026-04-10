@@ -1,9 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  mapChromeGroupToTabGroup,
-  mapChromeTabToTab,
-  mapChromeColorToHex,
-} from './chromeMapper';
+import { mapChromeGroupToTabGroup, mapChromeTabToTab, mapChromeColorToHex } from './chromeMapper';
 
 // ── Helpers to build minimal Chrome mock objects ─────────────────────────────
 

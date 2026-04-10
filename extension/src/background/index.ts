@@ -22,10 +22,12 @@ chrome.tabGroups.onCreated.addListener((tabGroup) => {
 chrome.tabGroups.onUpdated.addListener((tabGroup) => {
   console.log('[TabNova] Tab group updated:', tabGroup);
   // Broadcast to all tabs/popups listening for real-time updates
-  chrome.runtime.sendMessage({
-    type: 'CHROME_GROUP_UPDATED',
-    payload: tabGroup,
-  }).catch(() => {}); // ignore if no listener is open
+  chrome.runtime
+    .sendMessage({
+      type: 'CHROME_GROUP_UPDATED',
+      payload: tabGroup,
+    })
+    .catch(() => {}); // ignore if no listener is open
 });
 
 chrome.tabGroups.onRemoved.addListener((tabGroup) => {
@@ -44,10 +46,12 @@ chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
   console.log('[TabNova] Tab removed:', tabId);
   if (!removeInfo.isWindowClosing) {
     // Broadcast so UI can refresh groups in case a group disappeared
-    chrome.runtime.sendMessage({
-      type: 'CHROME_TABS_CHANGED',
-      payload: null,
-    }).catch(() => {});
+    chrome.runtime
+      .sendMessage({
+        type: 'CHROME_TABS_CHANGED',
+        payload: null,
+      })
+      .catch(() => {});
   }
 });
 

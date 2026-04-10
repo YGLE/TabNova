@@ -73,7 +73,7 @@ describe('GroupForm', () => {
         initialValues={{ name: 'Travail', color: '#EC4899' }}
         onSubmit={vi.fn()}
         onCancel={vi.fn()}
-      />,
+      />
     );
     const input = screen.getByTestId('group-name-input') as HTMLInputElement;
     expect(input.value).toBe('Travail');

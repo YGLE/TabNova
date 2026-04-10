@@ -69,7 +69,7 @@ export const BubbleCluster = memo(function BubbleCluster({
       .force('center', d3.forceCenter(0, 0))
       .force(
         'collide',
-        d3.forceCollide<BubbleNode>((d) => d.radius + 15),
+        d3.forceCollide<BubbleNode>((d) => d.radius + 15)
       )
       .force('charge', d3.forceManyBody<BubbleNode>().strength(-80));
 
@@ -79,7 +79,7 @@ export const BubbleCluster = memo(function BubbleCluster({
           id: n.group.id,
           x: n.x ?? 0,
           y: n.y ?? 0,
-        })),
+        }))
       );
     });
 
@@ -100,12 +100,7 @@ export const BubbleCluster = memo(function BubbleCluster({
   const cy = height / 2;
 
   return (
-    <svg
-      width={width}
-      height={height}
-      style={{ display: 'block' }}
-      aria-label="Bubble cluster"
-    >
+    <svg width={width} height={height} style={{ display: 'block' }} aria-label="Bubble cluster">
       <g transform={`translate(${cx}, ${cy}) scale(${zoom})`}>
         {groups.map((group, index) => {
           const pos = positions.find((p) => p.id === group.id);
@@ -152,9 +147,7 @@ export const BubbleCluster = memo(function BubbleCluster({
                 stroke={isSelected ? 'white' : 'transparent'}
                 strokeWidth={isSelected ? 2 : 0}
                 style={{
-                  filter: isHovered
-                    ? `drop-shadow(0 0 12px ${group.color})`
-                    : 'none',
+                  filter: isHovered ? `drop-shadow(0 0 12px ${group.color})` : 'none',
                   transition: 'filter 0.2s ease',
                   transform: isHovered ? 'scale(1.05)' : 'scale(1)',
                   transformOrigin: 'center',
@@ -171,9 +164,7 @@ export const BubbleCluster = memo(function BubbleCluster({
                 fontWeight="600"
                 style={{ pointerEvents: 'none', userSelect: 'none' }}
               >
-                {group.name.length > 12
-                  ? group.name.slice(0, 10) + '\u2026'
-                  : group.name}
+                {group.name.length > 12 ? group.name.slice(0, 10) + '\u2026' : group.name}
               </text>
 
               {/* Tab count badge */}
@@ -193,9 +184,7 @@ export const BubbleCluster = memo(function BubbleCluster({
               {/* Orbiting tabs (visible on hover only) */}
               {isHovered &&
                 group.tabs.slice(0, 5).map((tab, i) => {
-                  const angle =
-                    (i / Math.min(group.tabs.length, 5)) * 2 * Math.PI -
-                    Math.PI / 2;
+                  const angle = (i / Math.min(group.tabs.length, 5)) * 2 * Math.PI - Math.PI / 2;
                   const orbitRadius = radius + 35;
                   const tx = Math.cos(angle) * orbitRadius;
                   const ty = Math.sin(angle) * orbitRadius;
@@ -214,13 +203,7 @@ export const BubbleCluster = memo(function BubbleCluster({
                         strokeWidth={1.5}
                       />
                       {tab.favicon ? (
-                        <image
-                          href={tab.favicon}
-                          x={-8}
-                          y={-8}
-                          width={16}
-                          height={16}
-                        />
+                        <image href={tab.favicon} x={-8} y={-8} width={16} height={16} />
                       ) : (
                         <text
                           textAnchor="middle"

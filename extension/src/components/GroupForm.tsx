@@ -39,11 +39,18 @@ export function GroupForm({
   const errorId = 'group-name-error';
 
   return (
-    <form onSubmit={(e) => { void handleSubmit(e); }} noValidate>
+    <form
+      onSubmit={(e) => {
+        void handleSubmit(e);
+      }}
+      noValidate
+    >
       {/* Name field */}
       <div className="mb-4">
         <div className="flex justify-between items-center mb-1">
-          <label htmlFor="group-name-input" className="text-sm text-gray-400">Nom</label>
+          <label htmlFor="group-name-input" className="text-sm text-gray-400">
+            Nom
+          </label>
           <span className="text-xs text-gray-500">
             {name.length}/{MAX_GROUP_NAME_LENGTH}
           </span>
@@ -70,7 +77,9 @@ export function GroupForm({
 
       {/* Color palette */}
       <div className="mb-6">
-        <label htmlFor="color-palette" className="text-sm text-gray-400 block mb-2">Couleur</label>
+        <label htmlFor="color-palette" className="text-sm text-gray-400 block mb-2">
+          Couleur
+        </label>
         <div id="color-palette" className="flex items-center gap-2 flex-wrap">
           {GROUP_COLORS.map((c) => (
             <button
@@ -78,9 +87,7 @@ export function GroupForm({
               type="button"
               onClick={() => setColor(c)}
               className={`w-7 h-7 rounded-full transition-all ${
-                color === c
-                  ? 'ring-2 ring-white ring-offset-2 ring-offset-gray-900'
-                  : ''
+                color === c ? 'ring-2 ring-white ring-offset-2 ring-offset-gray-900' : ''
               }`}
               style={{ backgroundColor: c }}
               aria-label={`Couleur ${c}`}

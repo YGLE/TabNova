@@ -1,5 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { truncateText, isGroupStale, generateId, debounce, formatRelativeTime, formatRelativeDate } from './helpers';
+import {
+  truncateText,
+  isGroupStale,
+  generateId,
+  debounce,
+  formatRelativeTime,
+  formatRelativeDate,
+} from './helpers';
 
 describe('truncateText', () => {
   it('does not truncate short text', () => {
@@ -42,8 +49,12 @@ describe('generateId', () => {
 });
 
 describe('debounce', () => {
-  beforeEach(() => { vi.useFakeTimers(); });
-  afterEach(() => { vi.useRealTimers(); });
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
 
   it('delays the function call by the given delay', () => {
     const fn = vi.fn();

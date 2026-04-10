@@ -56,10 +56,7 @@ export function handleMessage(
       return true; // keep channel open for async response
 
     case 'OPEN_GROUP_TABS':
-      handleOpenGroupTabs(
-        request.payload as { groupId: number },
-        sendResponse
-      );
+      handleOpenGroupTabs(request.payload as { groupId: number }, sendResponse);
       return true; // keep channel open for async response
 
     case 'OPEN_DASHBOARD':
@@ -74,17 +71,11 @@ export function handleMessage(
       return true; // keep channel open for async response
 
     case 'UPDATE_GROUP':
-      handleUpdateGroup(
-        request.payload as { chromeGroupId: number; title?: string },
-        sendResponse
-      );
+      handleUpdateGroup(request.payload as { chromeGroupId: number; title?: string }, sendResponse);
       return true; // keep channel open for async response
 
     case 'DELETE_GROUP':
-      handleDeleteGroup(
-        request.payload as { chromeGroupId: number },
-        sendResponse
-      );
+      handleDeleteGroup(request.payload as { chromeGroupId: number }, sendResponse);
       return true; // keep channel open for async response
 
     case 'START_SYNC':
@@ -184,9 +175,7 @@ function handleDeleteGroup(
     .catch((error: unknown) => sendResponse({ success: false, error: String(error) }));
 }
 
-async function handleStartSync(
-  sendResponse: (response: MessageResponse) => void
-): Promise<void> {
+async function handleStartSync(sendResponse: (response: MessageResponse) => void): Promise<void> {
   try {
     const config = await loadSyncConfig();
     if (!config) {
@@ -228,9 +217,7 @@ async function handleConfigureSync(
   }
 }
 
-function handleGetSyncStatus(
-  sendResponse: (response: MessageResponse) => void
-): void {
+function handleGetSyncStatus(sendResponse: (response: MessageResponse) => void): void {
   const state = useSyncStore.getState();
   sendResponse({ success: true, data: state });
 }

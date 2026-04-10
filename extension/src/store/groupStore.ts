@@ -39,21 +39,19 @@ export const useGroupStore = create<GroupState>((set, get) => ({
     // Synchronous state update so existing tests stay green
     set((state) => ({ groups: [...state.groups, group] }));
     // Async persistence (fire-and-forget)
-    dbCreateGroup(group).catch((err) =>
-      console.error('[TabNova] addGroup persist failed', err),
-    );
+    dbCreateGroup(group).catch((err) => console.error('[TabNova] addGroup persist failed', err));
   },
 
   updateGroup: (id, updates) => {
     // Synchronous state update
     set((state) => ({
       groups: state.groups.map((g) =>
-        g.id === id ? { ...g, ...updates, updatedAt: new Date() } : g,
+        g.id === id ? { ...g, ...updates, updatedAt: new Date() } : g
       ),
     }));
     // Async persistence
     dbUpdateGroup(id, updates).catch((err) =>
-      console.error('[TabNova] updateGroup persist failed', err),
+      console.error('[TabNova] updateGroup persist failed', err)
     );
   },
 
@@ -61,13 +59,10 @@ export const useGroupStore = create<GroupState>((set, get) => ({
     // Synchronous state update
     set((state) => ({
       groups: state.groups.filter((g) => g.id !== id),
-      selectedGroupId:
-        state.selectedGroupId === id ? null : state.selectedGroupId,
+      selectedGroupId: state.selectedGroupId === id ? null : state.selectedGroupId,
     }));
     // Async persistence
-    dbDeleteGroup(id).catch((err) =>
-      console.error('[TabNova] deleteGroup persist failed', err),
-    );
+    dbDeleteGroup(id).catch((err) => console.error('[TabNova] deleteGroup persist failed', err));
   },
 
   selectGroup: (id) => set({ selectedGroupId: id }),
@@ -75,36 +70,39 @@ export const useGroupStore = create<GroupState>((set, get) => ({
   pinGroup: (id) => {
     set((state) => ({
       groups: state.groups.map((g) =>
-        g.id === id ? { ...g, isPinned: true, updatedAt: new Date() } : g,
+        g.id === id ? { ...g, isPinned: true, updatedAt: new Date() } : g
       ),
     }));
     dbUpdateGroup(id, { isPinned: true }).catch((err) =>
-      console.error('[TabNova] pinGroup persist failed', err),
+      console.error('[TabNova] pinGroup persist failed', err)
     );
   },
 
   unpinGroup: (id) => {
     set((state) => ({
       groups: state.groups.map((g) =>
-        g.id === id ? { ...g, isPinned: false, updatedAt: new Date() } : g,
+        g.id === id ? { ...g, isPinned: false, updatedAt: new Date() } : g
       ),
     }));
     dbUpdateGroup(id, { isPinned: false }).catch((err) =>
-      console.error('[TabNova] unpinGroup persist failed', err),
+      console.error('[TabNova] unpinGroup persist failed', err)
     );
   },
 
   archiveGroup: (id) => {
     set((state) => ({
       groups: state.groups.map((g) =>
-        g.id === id ? { ...g, isArchived: true, updatedAt: new Date() } : g,
+        g.id === id ? { ...g, isArchived: true, updatedAt: new Date() } : g
       ),
     }));
     dbUpdateGroup(id, { isArchived: true }).catch((err) =>
-      console.error('[TabNova] archiveGroup persist failed', err),
+      console.error('[TabNova] archiveGroup persist failed', err)
     );
   },
 
   // Suppress unused-variable warning – get is used for future selectors
-  ...(() => { void get; return {}; })(),
+  ...(() => {
+    void get;
+    return {};
+  })(),
 }));

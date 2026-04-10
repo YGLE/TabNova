@@ -72,7 +72,7 @@ describe('syncProviderFactory', () => {
 
     it('loads the config from chrome.storage.local', async () => {
       vi.mocked(chrome.storage.local.get).mockImplementation(() =>
-        Promise.resolve({ tabnova_sync_config: JSON.stringify(googleConfig) }),
+        Promise.resolve({ tabnova_sync_config: JSON.stringify(googleConfig) })
       );
 
       const loaded = await loadSyncConfig();
@@ -92,10 +92,7 @@ describe('syncProviderFactory', () => {
 
       await saveSyncConfig(icloudConfig);
 
-      expect(setItemSpy).toHaveBeenCalledWith(
-        'tabnova_sync_config',
-        JSON.stringify(icloudConfig),
-      );
+      expect(setItemSpy).toHaveBeenCalledWith('tabnova_sync_config', JSON.stringify(icloudConfig));
     });
 
     it('falls back to localStorage when chrome.storage.local.get throws', async () => {

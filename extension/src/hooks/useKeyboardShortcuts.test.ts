@@ -16,12 +16,12 @@ describe('useKeyboardShortcuts', () => {
 
     act(() => {
       window.dispatchEvent(
-        new KeyboardEvent('keydown', { key: 'k', ctrlKey: true, bubbles: true }),
+        new KeyboardEvent('keydown', { key: 'k', ctrlKey: true, bubbles: true })
       );
     });
 
     expect(dispatchSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'tabnova:focus-search' }),
+      expect.objectContaining({ type: 'tabnova:focus-search' })
     );
   });
 
@@ -31,12 +31,12 @@ describe('useKeyboardShortcuts', () => {
 
     act(() => {
       window.dispatchEvent(
-        new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }),
+        new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true })
       );
     });
 
     expect(dispatchSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'tabnova:focus-search' }),
+      expect.objectContaining({ type: 'tabnova:focus-search' })
     );
   });
 
@@ -46,9 +46,7 @@ describe('useKeyboardShortcuts', () => {
     renderHook(() => useKeyboardShortcuts());
 
     act(() => {
-      window.dispatchEvent(
-        new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }),
-      );
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
     });
 
     expect(useUIStore.getState().searchQuery).toBe('');

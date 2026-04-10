@@ -26,7 +26,7 @@ describe('ErrorBoundary', () => {
     render(
       <ErrorBoundary>
         <ThrowingComponent shouldThrow={false} />
-      </ErrorBoundary>,
+      </ErrorBoundary>
     );
     expect(screen.getByText('Child content')).toBeInTheDocument();
   });
@@ -35,7 +35,7 @@ describe('ErrorBoundary', () => {
     render(
       <ErrorBoundary fallback={<div>Custom fallback</div>}>
         <ThrowingComponent shouldThrow={true} />
-      </ErrorBoundary>,
+      </ErrorBoundary>
     );
     expect(screen.getByText('Custom fallback')).toBeInTheDocument();
     expect(screen.queryByText('Child content')).not.toBeInTheDocument();
@@ -45,7 +45,7 @@ describe('ErrorBoundary', () => {
     render(
       <ErrorBoundary>
         <ThrowingComponent shouldThrow={true} />
-      </ErrorBoundary>,
+      </ErrorBoundary>
     );
     expect(screen.getByText('Une erreur est survenue')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Réessayer' })).toBeInTheDocument();
@@ -55,7 +55,7 @@ describe('ErrorBoundary', () => {
     render(
       <ErrorBoundary>
         <ThrowingComponent shouldThrow={true} />
-      </ErrorBoundary>,
+      </ErrorBoundary>
     );
     expect(screen.getByText('Test error message')).toBeInTheDocument();
   });
@@ -72,7 +72,7 @@ describe('ErrorBoundary', () => {
     const { rerender } = render(
       <ErrorBoundary>
         <ToggleableComponent />
-      </ErrorBoundary>,
+      </ErrorBoundary>
     );
 
     // Error UI is shown
@@ -86,7 +86,7 @@ describe('ErrorBoundary', () => {
     rerender(
       <ErrorBoundary>
         <ToggleableComponent />
-      </ErrorBoundary>,
+      </ErrorBoundary>
     );
 
     expect(screen.getByText('Child content')).toBeInTheDocument();

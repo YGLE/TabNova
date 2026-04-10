@@ -29,7 +29,7 @@ export function mergeChangeLogs(local: Change[], remote: Change[]): Change[] {
     }
   }
   return Array.from(map.values()).sort(
-    (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+    (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
   );
 }
 
@@ -49,7 +49,7 @@ export function applyChanges(groups: TabGroup[], changes: Change[]): TabGroup[] 
         break;
       case 'UPDATE':
         result = result.map((g) =>
-          g.id === change.entityId ? { ...g, ...(change.data as Partial<TabGroup>) } : g,
+          g.id === change.entityId ? { ...g, ...(change.data as Partial<TabGroup>) } : g
         );
         break;
       case 'DELETE':

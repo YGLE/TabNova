@@ -33,9 +33,7 @@ describe('GoogleDriveSyncProvider', () => {
 
   describe('findFileId (via download/upload)', () => {
     it('returns null when no file exists (empty files list)', async () => {
-      vi.mocked(fetch).mockResolvedValue(
-        mockResponse({ files: [] }),
-      );
+      vi.mocked(fetch).mockResolvedValue(mockResponse({ files: [] }));
 
       const provider = new GoogleDriveSyncProvider(MOCK_TOKEN);
       const result = await provider.download();
@@ -90,9 +88,9 @@ describe('GoogleDriveSyncProvider', () => {
       await provider.upload(mockPayload);
 
       for (const [, init] of vi.mocked(fetch).mock.calls) {
-        expect((init as RequestInit & { headers: Record<string, string> }).headers['Authorization']).toBe(
-          `Bearer ${MOCK_TOKEN}`,
-        );
+        expect(
+          (init as RequestInit & { headers: Record<string, string> }).headers['Authorization']
+        ).toBe(`Bearer ${MOCK_TOKEN}`);
       }
     });
   });
@@ -151,7 +149,7 @@ describe('initiateGoogleAuth', () => {
     expect(token).toBe('mock-token');
     expect(chrome.identity.getAuthToken).toHaveBeenCalledWith(
       { interactive: true },
-      expect.any(Function),
+      expect.any(Function)
     );
   });
 
@@ -168,7 +166,7 @@ describe('initiateGoogleAuth', () => {
           value: undefined,
           configurable: true,
         });
-      },
+      }
     );
 
     await expect(initiateGoogleAuth()).rejects.toThrow('User cancelled');
@@ -178,7 +176,7 @@ describe('initiateGoogleAuth', () => {
     vi.spyOn(chrome.identity, 'getAuthToken').mockImplementation(
       (_options: unknown, callback: (token?: string) => void) => {
         callback(undefined);
-      },
+      }
     );
 
     await expect(initiateGoogleAuth()).rejects.toThrow('Auth failed');
@@ -197,12 +195,10 @@ describe('revokeGoogleAuth', () => {
   it('calls revoke endpoint and removes cached token', async () => {
     await revokeGoogleAuth('some-token');
 
-    expect(fetch).toHaveBeenCalledWith(
-      expect.stringContaining('some-token'),
-    );
+    expect(fetch).toHaveBeenCalledWith(expect.stringContaining('some-token'));
     expect(chrome.identity.removeCachedAuthToken).toHaveBeenCalledWith(
       { token: 'some-token' },
-      expect.any(Function),
+      expect.any(Function)
     );
   });
 });

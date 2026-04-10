@@ -34,7 +34,7 @@ export async function createGroup(name: string, color?: string): Promise<TabGrou
  */
 export async function updateGroup(
   id: string,
-  patch: Partial<Pick<TabGroup, 'name' | 'color' | 'isPinned'>>,
+  patch: Partial<Pick<TabGroup, 'name' | 'color' | 'isPinned'>>
 ): Promise<void> {
   const { groups } = useGroupStore.getState();
   const previous = groups.find((g) => g.id === id);
@@ -79,7 +79,7 @@ export async function deleteGroup(id: string): Promise<void> {
 export async function mergeGroups(
   ids: string[],
   finalName: string,
-  finalColor?: string,
+  finalColor?: string
 ): Promise<TabGroup> {
   const { groups } = useGroupStore.getState();
 

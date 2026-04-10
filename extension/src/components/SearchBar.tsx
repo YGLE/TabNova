@@ -28,11 +28,13 @@ export function SearchBar({ placeholder = '🔍 Chercher un onglet ou groupe...'
   );
 
   return (
-    <div style={{
-      padding: '12px 16px',
-      borderBottom: '1px solid #1F2937',
-      flexShrink: 0,
-    }}>
+    <div
+      style={{
+        padding: '12px 16px',
+        borderBottom: '1px solid #1F2937',
+        flexShrink: 0,
+      }}
+    >
       <div style={{ position: 'relative' }}>
         <input
           type="text"

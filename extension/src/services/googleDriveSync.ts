@@ -24,7 +24,7 @@ export class GoogleDriveSyncProvider implements SyncProvider {
   private async findFileId(): Promise<string | null> {
     const resp = await fetch(
       `${GDRIVE_API}/files?q=name='${GDRIVE_FILE_NAME}' and trashed=false&fields=files(id)`,
-      { headers: { Authorization: `Bearer ${this.accessToken}` } },
+      { headers: { Authorization: `Bearer ${this.accessToken}` } }
     );
     if (!resp.ok) return null;
     const data = (await resp.json()) as DriveFilesResponse;

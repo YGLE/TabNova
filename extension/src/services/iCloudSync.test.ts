@@ -93,9 +93,7 @@ describe('iCloudSyncProvider', () => {
     });
 
     it('returns null when the record has no data field', async () => {
-      vi.mocked(fetch).mockResolvedValue(
-        mockResponse({ records: [{ fields: {} }] }),
-      );
+      vi.mocked(fetch).mockResolvedValue(mockResponse({ records: [{ fields: {} }] }));
 
       const provider = new iCloudSyncProvider(mockConfig);
       const result = await provider.download();
@@ -120,7 +118,7 @@ describe('iCloudSyncProvider', () => {
               },
             },
           ],
-        }),
+        })
       );
 
       const provider = new iCloudSyncProvider(mockConfig);

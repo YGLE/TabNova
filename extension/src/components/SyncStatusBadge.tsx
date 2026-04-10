@@ -28,9 +28,7 @@ export function SyncStatusBadge({ compact = false }: SyncStatusBadgeProps) {
           className={`w-2 h-2 rounded-full ${colorClass} ${isPulsing ? 'animate-pulse' : ''}`}
           data-testid="sync-dot"
         />
-        <span className="text-xs text-gray-400">
-          {!isOnline ? 'Offline' : 'Sync'}
-        </span>
+        <span className="text-xs text-gray-400">{!isOnline ? 'Offline' : 'Sync'}</span>
       </div>
     );
   }
@@ -49,10 +47,7 @@ export function SyncStatusBadge({ compact = false }: SyncStatusBadgeProps) {
   }
 
   return (
-    <div
-      className="flex items-center gap-2 text-sm"
-      data-testid="sync-status-badge"
-    >
+    <div className="flex items-center gap-2 text-sm" data-testid="sync-status-badge">
       <span
         className={`w-2 h-2 rounded-full ${colorClass} ${isPulsing ? 'animate-pulse' : ''}`}
         data-testid="sync-dot"

@@ -7,7 +7,7 @@ describe('Modal', () => {
     const { container } = render(
       <Modal isOpen={false} onClose={vi.fn()} title="Test">
         <p>Content</p>
-      </Modal>,
+      </Modal>
     );
     expect(container.firstChild).toBeNull();
   });
@@ -16,7 +16,7 @@ describe('Modal', () => {
     render(
       <Modal isOpen={true} onClose={vi.fn()} title="Test">
         <p>Hello world</p>
-      </Modal>,
+      </Modal>
     );
     expect(screen.getByText('Hello world')).toBeInTheDocument();
   });
@@ -26,7 +26,7 @@ describe('Modal', () => {
     render(
       <Modal isOpen={true} onClose={onClose} title="Test">
         <p>Content</p>
-      </Modal>,
+      </Modal>
     );
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(onClose).toHaveBeenCalledTimes(1);
@@ -37,7 +37,7 @@ describe('Modal', () => {
     render(
       <Modal isOpen={true} onClose={onClose} title="Test">
         <p>Content</p>
-      </Modal>,
+      </Modal>
     );
     fireEvent.click(screen.getByTestId('modal-overlay'));
     expect(onClose).toHaveBeenCalledTimes(1);
@@ -48,7 +48,7 @@ describe('Modal', () => {
     render(
       <Modal isOpen={true} onClose={onClose} title="Test">
         <p>Content</p>
-      </Modal>,
+      </Modal>
     );
     fireEvent.click(screen.getByTestId('modal-panel'));
     expect(onClose).not.toHaveBeenCalled();
@@ -58,7 +58,7 @@ describe('Modal', () => {
     render(
       <Modal isOpen={true} onClose={vi.fn()} title="Mon Titre">
         <p>Content</p>
-      </Modal>,
+      </Modal>
     );
     expect(screen.getByText('Mon Titre')).toBeInTheDocument();
   });

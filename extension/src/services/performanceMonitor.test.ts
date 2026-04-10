@@ -34,7 +34,7 @@ describe('performanceMonitor', () => {
       await measureAsync('slow-op', async () => 'done');
 
       expect(console.warn).toHaveBeenCalledWith(
-        expect.stringContaining('Slow operation "slow-op"'),
+        expect.stringContaining('Slow operation "slow-op"')
       );
     });
 
@@ -51,7 +51,7 @@ describe('performanceMonitor', () => {
       await expect(
         measureAsync('failing-op', async () => {
           throw boom;
-        }),
+        })
       ).rejects.toThrow('boom');
     });
 
@@ -59,11 +59,11 @@ describe('performanceMonitor', () => {
       await expect(
         measureAsync('err-op', async () => {
           throw new Error('fail');
-        }),
+        })
       ).rejects.toThrow();
 
       expect(console.error).toHaveBeenCalledWith(
-        expect.stringContaining('Failed operation "err-op"'),
+        expect.stringContaining('Failed operation "err-op"')
       );
     });
   });
@@ -85,7 +85,7 @@ describe('performanceMonitor', () => {
       stop();
 
       expect(console.warn).toHaveBeenCalledWith(
-        expect.stringContaining('Slow render "SlowComponent"'),
+        expect.stringContaining('Slow render "SlowComponent"')
       );
     });
 
@@ -144,7 +144,7 @@ describe('performanceMonitor', () => {
       const debounced = createTrackedDebounce(
         fn as unknown as (...args: unknown[]) => void,
         50,
-        'args-test',
+        'args-test'
       );
 
       debounced('hello', 42);
@@ -170,7 +170,7 @@ describe('performanceMonitor', () => {
       vi.advanceTimersByTime(10);
 
       expect(console.warn).toHaveBeenCalledWith(
-        expect.stringContaining('Slow debounced call "slow-debounce"'),
+        expect.stringContaining('Slow debounced call "slow-debounce"')
       );
     });
   });
