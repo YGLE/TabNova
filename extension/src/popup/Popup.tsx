@@ -78,11 +78,16 @@ export function Popup() {
   };
 
   const handleOpenTabs = (group: TabGroup) => {
-    chrome.runtime.sendMessage({ type: 'OPEN_GROUP_TABS', groupId: group.id });
+    if (group.syncId) {
+      chrome.runtime.sendMessage({
+        type: 'OPEN_GROUP_TABS',
+        payload: { groupId: Number(group.syncId) },
+      });
+    }
   };
 
   const handleClickGroup = (group: TabGroup) => {
-    chrome.runtime.sendMessage({ type: 'OPEN_GROUP_TABS', groupId: group.id });
+    handleOpenTabs(group);
   };
 
   return (

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useGroupStore } from '@store/groupStore';
 import { useSyncStore } from '@store/syncStore';
 import type { TabGroup } from '@tabnova-types/TabGroup';
@@ -22,6 +22,12 @@ export function useTabGroups(): UseTabGroupsReturn {
   const [isSyncing, setIsSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Sync automatique au montage de la popup
+  useEffect(() => {
+    syncFromChrome();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const filteredGroups = useMemo(() => {
     if (!searchQuery.trim()) return groups;
     const query = searchQuery.toLowerCase();
@@ -34,20 +40,20 @@ export function useTabGroups(): UseTabGroupsReturn {
     setSyncStatus('syncing');
 
     try {
-      const response = await new Promise<{ groups?: TabGroup[]; error?: string }>(
+      const response = await new Promise<{ success: boolean; data?: TabGroup[]; error?: string }>(
         (resolve, reject) => {
           chrome.runtime.sendMessage({ type: 'SYNC_FROM_CHROME' }, (resp) => {
             if (chrome.runtime.lastError) {
               reject(new Error(chrome.runtime.lastError.message));
             } else {
-              resolve(resp as { groups?: TabGroup[]; error?: string });
+              resolve(resp as { success: boolean; data?: TabGroup[]; error?: string });
             }
           });
         }
       );
 
-      if (response?.groups) {
-        setGroups(response.groups);
+      if (response?.success && Array.isArray(response.data)) {
+        setGroups(response.data);
         setSyncStatus('success');
       } else if (response?.error) {
         throw new Error(response.error);
