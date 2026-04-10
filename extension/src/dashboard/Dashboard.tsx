@@ -55,6 +55,24 @@ export function Dashboard() {
     group: TabGroup | null;
   }>({ isOpen: false, position: { x: 0, y: 0 }, group: null });
 
+  // Charge les groupes persistés au mount (IndexedDB via background)
+  useEffect(() => {
+    chrome.runtime.sendMessage({ type: 'GET_PERSISTED_GROUPS' }, (resp) => {
+      if (chrome.runtime.lastError) return;
+      if (resp?.success && Array.isArray(resp.data) && resp.data.length > 0) {
+        useGroupStore.getState().setGroups(resp.data);
+      } else {
+        // Aucun groupe persisté → sync depuis Chrome directement
+        chrome.runtime.sendMessage({ type: 'SYNC_FROM_CHROME' }, (syncResp) => {
+          if (chrome.runtime.lastError) return;
+          if (syncResp?.success && Array.isArray(syncResp.data)) {
+            useGroupStore.getState().setGroups(syncResp.data);
+          }
+        });
+      }
+    });
+  }, []);
+
   // Track real container size
   useEffect(() => {
     if (!containerRef.current) return;

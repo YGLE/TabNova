@@ -1,6 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { handleMessage } from './messageHandler';
 
+// Mock groupRepository : getAllGroups retourne ce que createGroup a reçu
+const _dbStore: unknown[] = [];
+vi.mock('@storage/groupRepository', () => ({
+  getAllGroups: vi.fn().mockImplementation(async () => [..._dbStore]),
+  createGroup: vi.fn().mockImplementation(async (g) => {
+    _dbStore.push(g);
+    return g;
+  }),
+  updateGroup: vi.fn().mockImplementation(async (_id: string, patch: unknown) => patch),
+}));
+
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 function makeChromeGroup(
@@ -55,6 +66,8 @@ async function dispatch(
 describe('messageHandler integration', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Vide le store en mémoire entre les tests
+    _dbStore.length = 0;
 
     // chrome.tabs.group → returns new group id
     (chrome.tabs.group as ReturnType<typeof vi.fn>).mockResolvedValue(42);

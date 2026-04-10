@@ -12,10 +12,17 @@ import { loadSyncConfig, saveSyncConfig } from '@services/syncProviderFactory';
 import { createSyncProvider } from '@services/syncProviderFactory';
 import { syncWithProvider } from '@services/syncEngine';
 import type { SyncConfig } from '@services/syncProviderFactory';
+import {
+  createGroup as dbCreateGroup,
+  getAllGroups as dbGetAllGroups,
+  updateGroup as dbUpdateGroup,
+} from '@storage/groupRepository';
+import type { TabGroup } from '@tabnova-types/index';
 
 export type MessageType =
   | 'GET_ALL_GROUPS'
   | 'SYNC_FROM_CHROME'
+  | 'GET_PERSISTED_GROUPS'
   | 'OPEN_GROUP_TABS'
   | 'OPEN_DASHBOARD'
   | 'PING'
@@ -54,6 +61,10 @@ export function handleMessage(
     case 'SYNC_FROM_CHROME':
       handleSyncFromChrome(sendResponse);
       return true; // keep channel open for async response
+
+    case 'GET_PERSISTED_GROUPS':
+      handleGetPersistedGroups(sendResponse);
+      return true;
 
     case 'OPEN_GROUP_TABS':
       handleOpenGroupTabs(request.payload as { groupId: number }, sendResponse);
@@ -111,11 +122,56 @@ async function handleSyncFromChrome(
   sendResponse: (response: MessageResponse) => void
 ): Promise<void> {
   try {
+    // 1. Récupère les groupes actuellement ouverts dans Chrome
     const groupsWithTabs = await getAllGroupsWithTabs();
-    const mappedGroups = groupsWithTabs.map(({ group, tabs }) =>
+    const chromeGroups = groupsWithTabs.map(({ group, tabs }) =>
       mapChromeGroupToTabGroup(group, tabs)
     );
-    sendResponse({ success: true, data: mappedGroups });
+
+    // 2. Charge les groupes déjà persistés dans IndexedDB
+    const persistedGroups = await dbGetAllGroups();
+
+    // 3. Merge : met à jour les groupes existants (par syncId), ajoute les nouveaux
+    //    Les groupes persistés non présents dans Chrome sont conservés
+
+    // Upsert les groupes Chrome dans IndexedDB
+    for (const chromeGroup of chromeGroups) {
+      // Cherche si un groupe persisté a le même syncId (chromeGroupId)
+      const existing = persistedGroups.find((p) => p.syncId === chromeGroup.syncId);
+      if (existing) {
+        // Met à jour nom, couleur, tabs — mais garde l'id interne
+        await dbUpdateGroup(existing.id, {
+          name: chromeGroup.name,
+          color: chromeGroup.color,
+          tabs: chromeGroup.tabs.map((t) => ({ ...t, groupId: existing.id })),
+          updatedAt: new Date(),
+        });
+        chromeGroup.id = existing.id; // cohérence dans la réponse
+      } else {
+        // Nouveau groupe Chrome → persiste
+        await dbCreateGroup(chromeGroup);
+      }
+    }
+
+    // 4. Recharge depuis IndexedDB (source de vérité)
+    const allGroups = await dbGetAllGroups();
+
+    // 5. Marque les groupes non présents dans Chrome (fenêtres fermées)
+    //    En les laissant tels quels — ils sont conservés
+    const result: TabGroup[] = allGroups;
+
+    sendResponse({ success: true, data: result });
+  } catch (error) {
+    sendResponse({ success: false, error: String(error) });
+  }
+}
+
+async function handleGetPersistedGroups(
+  sendResponse: (response: MessageResponse) => void
+): Promise<void> {
+  try {
+    const groups = await dbGetAllGroups();
+    sendResponse({ success: true, data: groups });
   } catch (error) {
     sendResponse({ success: false, error: String(error) });
   }
