@@ -1,11 +1,22 @@
 // Message types shared between popup, dashboard, and background
 
+import {
+  getAllGroupsWithTabs,
+  createChromeGroup,
+  removeChromeGroup,
+  openAllTabsInGroup,
+} from './chromeApi';
+import { mapChromeGroupToTabGroup } from './chromeMapper';
+
 export type MessageType =
   | 'GET_ALL_GROUPS'
   | 'SYNC_FROM_CHROME'
   | 'OPEN_GROUP_TABS'
   | 'OPEN_DASHBOARD'
-  | 'PING';
+  | 'PING'
+  | 'CREATE_GROUP'
+  | 'UPDATE_GROUP'
+  | 'DELETE_GROUP';
 
 export interface Message {
   type: MessageType;
@@ -33,17 +44,27 @@ export function handleMessage(
       break;
 
     case 'SYNC_FROM_CHROME':
-      // TODO SPRINT 2: Implement sync from Chrome to IndexedDB
-      sendResponse({ success: true, data: [] });
+      handleSyncFromChrome(sendResponse);
       break;
 
     case 'OPEN_GROUP_TABS':
-      // TODO SPRINT 2: Open all tabs in a group
-      sendResponse({ success: true });
+      handleOpenGroupTabs(request.payload, sendResponse);
       break;
 
     case 'OPEN_DASHBOARD':
       handleOpenDashboard(sendResponse);
+      break;
+
+    case 'CREATE_GROUP':
+      handleCreateGroup(request.payload, sendResponse);
+      break;
+
+    case 'UPDATE_GROUP':
+      handleUpdateGroup(request.payload, sendResponse);
+      break;
+
+    case 'DELETE_GROUP':
+      handleDeleteGroup(request.payload, sendResponse);
       break;
 
     default:
@@ -63,6 +84,30 @@ async function handleGetAllGroups(
   }
 }
 
+async function handleSyncFromChrome(
+  sendResponse: (response: MessageResponse) => void
+): Promise<void> {
+  try {
+    const groupsWithTabs = await getAllGroupsWithTabs();
+    const mappedGroups = groupsWithTabs.map(({ group, tabs }) =>
+      mapChromeGroupToTabGroup(group, tabs)
+    );
+    sendResponse({ success: true, data: mappedGroups });
+  } catch (error) {
+    sendResponse({ success: false, error: String(error) });
+  }
+}
+
+function handleOpenGroupTabs(
+  payload: unknown,
+  sendResponse: (response: MessageResponse) => void
+): void {
+  const { groupId } = payload as { groupId: number };
+  openAllTabsInGroup(groupId)
+    .then(() => sendResponse({ success: true }))
+    .catch((error: unknown) => sendResponse({ success: false, error: String(error) }));
+}
+
 async function handleOpenDashboard(
   sendResponse: (response: MessageResponse) => void
 ): Promise<void> {
@@ -74,4 +119,42 @@ async function handleOpenDashboard(
   } catch (error) {
     sendResponse({ success: false, error: String(error) });
   }
+}
+
+function handleCreateGroup(
+  payload: unknown,
+  sendResponse: (response: MessageResponse) => void
+): void {
+  const { tabIds, title, color } = payload as {
+    tabIds: number[];
+    title: string;
+    color?: chrome.tabGroups.ColorEnum;
+  };
+  createChromeGroup(tabIds, title, color)
+    .then((groupId) => sendResponse({ success: true, data: groupId }))
+    .catch((error: unknown) => sendResponse({ success: false, error: String(error) }));
+}
+
+function handleUpdateGroup(
+  payload: unknown,
+  sendResponse: (response: MessageResponse) => void
+): void {
+  const { chromeGroupId, title } = payload as {
+    chromeGroupId: number;
+    title?: string;
+  };
+  chrome.tabGroups
+    .update(chromeGroupId, { ...(title !== undefined ? { title } : {}) })
+    .then((updated) => sendResponse({ success: true, data: updated }))
+    .catch((error: unknown) => sendResponse({ success: false, error: String(error) }));
+}
+
+function handleDeleteGroup(
+  payload: unknown,
+  sendResponse: (response: MessageResponse) => void
+): void {
+  const { chromeGroupId } = payload as { chromeGroupId: number };
+  removeChromeGroup(chromeGroupId)
+    .then(() => sendResponse({ success: true }))
+    .catch((error: unknown) => sendResponse({ success: false, error: String(error) }));
 }

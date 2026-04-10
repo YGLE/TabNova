@@ -60,6 +60,66 @@ export async function openAllTabsInGroup(groupId: number): Promise<void> {
   }
 }
 
+/**
+ * Creates a new Chrome tab group from the given tab IDs and returns the group ID.
+ * Returns null if the operation fails.
+ */
+export async function createChromeGroup(
+  tabIds: number[],
+  title: string,
+  color?: chrome.tabGroups.ColorEnum
+): Promise<number | null> {
+  try {
+    const groupId = await chrome.tabs.group({ tabIds });
+    await chrome.tabGroups.update(groupId, { title, ...(color ? { color } : {}) });
+    return groupId;
+  } catch (error) {
+    console.error('[TabNova] Error creating chrome group:', error);
+    return null;
+  }
+}
+
+/**
+ * Ungroups all tabs in the given Chrome group, effectively removing the group.
+ */
+export async function removeChromeGroup(groupId: number): Promise<void> {
+  try {
+    const tabs = await getTabsInGroup(groupId);
+    const tabIds = tabs.map((t) => t.id).filter((id): id is number => id !== undefined);
+    if (tabIds.length > 0) {
+      await chrome.tabs.ungroup(tabIds);
+    }
+  } catch (error) {
+    console.error('[TabNova] Error removing chrome group:', groupId, error);
+  }
+}
+
+/**
+ * Renames a Chrome tab group.
+ */
+export async function renameChromeGroup(groupId: number, title: string): Promise<void> {
+  try {
+    await chrome.tabGroups.update(groupId, { title });
+  } catch (error) {
+    console.error('[TabNova] Error renaming chrome group:', groupId, error);
+  }
+}
+
+/**
+ * Returns all Chrome tab groups paired with their tabs.
+ */
+export async function getAllGroupsWithTabs(): Promise<
+  { group: chrome.tabGroups.TabGroup; tabs: chrome.tabs.Tab[] }[]
+> {
+  const groups = await getAllTabGroups();
+  const result: { group: chrome.tabGroups.TabGroup; tabs: chrome.tabs.Tab[] }[] = [];
+  for (const group of groups) {
+    const tabs = await getTabsInGroup(group.id);
+    result.push({ group, tabs });
+  }
+  return result;
+}
+
 export async function setupContextMenus(): Promise<void> {
   try {
     // Remove existing menus first

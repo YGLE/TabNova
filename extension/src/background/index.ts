@@ -21,7 +21,11 @@ chrome.tabGroups.onCreated.addListener((tabGroup) => {
 
 chrome.tabGroups.onUpdated.addListener((tabGroup) => {
   console.log('[TabNova] Tab group updated:', tabGroup);
-  // TODO SPRINT 2: Sync to IndexedDB
+  // Broadcast to all tabs/popups listening for real-time updates
+  chrome.runtime.sendMessage({
+    type: 'CHROME_GROUP_UPDATED',
+    payload: tabGroup,
+  }).catch(() => {}); // ignore if no listener is open
 });
 
 chrome.tabGroups.onRemoved.addListener((tabGroup) => {
@@ -36,9 +40,15 @@ chrome.tabs.onCreated.addListener((tab) => {
   // TODO SPRINT 2: Track in IndexedDB
 });
 
-chrome.tabs.onRemoved.addListener((tabId) => {
+chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
   console.log('[TabNova] Tab removed:', tabId);
-  // TODO SPRINT 2: Remove from IndexedDB
+  if (!removeInfo.isWindowClosing) {
+    // Broadcast so UI can refresh groups in case a group disappeared
+    chrome.runtime.sendMessage({
+      type: 'CHROME_TABS_CHANGED',
+      payload: null,
+    }).catch(() => {});
+  }
 });
 
 // ── Message handling ─────────────────────────────────────────────────────────

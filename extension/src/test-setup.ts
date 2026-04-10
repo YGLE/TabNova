@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom';
+import 'fake-indexeddb/auto';
 
 // Mock Chrome APIs for tests
 const chromeMock = {
