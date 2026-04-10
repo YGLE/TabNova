@@ -1,12 +1,30 @@
 import '@testing-library/jest-dom';
 import 'fake-indexeddb/auto';
 
+// Mock requestAnimationFrame / cancelAnimationFrame for jsdom
+if (typeof globalThis.requestAnimationFrame === 'undefined') {
+  let rafId = 0;
+  globalThis.requestAnimationFrame = (cb: FrameRequestCallback): number => {
+    rafId += 1;
+    const id = rafId;
+    setTimeout(() => cb(performance.now()), 16);
+    return id;
+  };
+  globalThis.cancelAnimationFrame = (_id: number): void => {
+    // No-op: setTimeout-based rAF cannot be easily cancelled by id in tests
+  };
+}
+
 // Mock Chrome APIs for tests
 const chromeMock = {
   runtime: {
     onInstalled: { addListener: vi.fn() },
-    onMessage: { addListener: vi.fn() },
+    onMessage: {
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+    },
     sendMessage: vi.fn(),
+    lastError: undefined as chrome.runtime.LastError | undefined,
   },
   tabGroups: {
     query: vi.fn().mockResolvedValue([]),

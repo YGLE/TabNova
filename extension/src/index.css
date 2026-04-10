@@ -89,6 +89,22 @@ html, body {
   50%       { transform: translateY(-6px); }
 }
 
+@keyframes bubbleEntrance {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes orbitFadeIn {
+  from { opacity: 0; transform: scale(0.5); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
 .animate-explosion { animation: explosion 800ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
 .animate-fade-in   { animation: fadeIn 300ms ease-in-out forwards; }
 .animate-pulse     { animation: pulse 2s infinite; }
